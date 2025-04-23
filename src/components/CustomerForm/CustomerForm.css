@@ -1,0 +1,65 @@
+.form-container{
+    position: fixed; /* Quan trọng để form overlay lên trang */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.3); 
+    z-index: 10;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#customer-form{
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center;
+    width: 700px;
+    padding: 30px;
+	height: 90%;
+    background: rgb(183, 207, 226);
+    border-radius: 10px;
+    box-shadow: 5px 20px 50px #000;
+}
+
+#customer-form input{
+	width: 70%;
+	height: 20px;
+	background: #e0dede;
+	justify-content: center;
+	display: flex;
+	margin: 20px auto;
+	padding: 12px;
+	border: none;
+	border-radius: 5px;
+}
+
+#customer-form select{
+	width: 75%;
+	margin: 20px auto;
+	padding: 12px;
+	border-radius: 5px;
+	border-color: #e0dede;
+	background: #e0dede;
+}
+
+#customer-form button{
+	width: 60%;
+	height: 40px;
+	margin: 10px auto;
+	justify-content: center;
+	display: block;
+	color: #fff;
+	background: #0855b9;
+	font-size: 1em;
+	font-weight: bold;
+	margin-top: 30px;
+	outline: none;
+	border: none;
+	border-radius: 5px;
+	transition: .2s ease-in;
+	cursor: pointer;
+}

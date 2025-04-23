@@ -1,0 +1,25 @@
+.filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 10px;
+    margin: 10px 0px;
+    float: left;
+}
+
+.filter-form input,
+.filter-form button {
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.filter-form button {
+    background-color: #2196f3;
+    color: white;
+    cursor: pointer;
+}
+
+.filter-form button:hover {
+    background-color: #1976d2;
+}

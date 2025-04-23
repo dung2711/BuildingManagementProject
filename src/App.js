@@ -1,24 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { AuthProvider } from "./contexts/AuthContext";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import LoginPage from "./pages/LoginPage/LoginPage";
+import AuthorizedRoute from "./routes/AuthorizedRoute";
+import HomePage from "./pages/HomePage/HomePage";
+import UserPage from "./pages/UserPage/UserPage";
+import CustomerPage from "./pages/CustomerPage/CustomerPage";
+import OrderPage from "./pages/OrderPage/OrderPage";
+import PropertyPage from "./pages/PropertyPage/PropertyPage";
+import ComplaintPage from "./pages/ComplaintPage/ComplaintPage";
+import IssuePage from "./pages/IssuePage/IssuePage";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<LoginPage />}></Route>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/user" element={<AuthorizedRoute allowedRoles={["admin"]}><UserPage /></AuthorizedRoute>} />
+          <Route path="/customer" element={<AuthorizedRoute allowedRoles={["manager"]}><CustomerPage /></AuthorizedRoute>} />
+          <Route path="/order" element={<AuthorizedRoute allowedRoles={["manager","customer"]}><OrderPage /></AuthorizedRoute>} />
+          <Route path="/property" element={<AuthorizedRoute allowedRoles={["manager"]}><PropertyPage /></AuthorizedRoute>} />
+          <Route path="/complaint" element={<AuthorizedRoute allowedRoles={["manager", "customer"]}><ComplaintPage /></AuthorizedRoute>} />
+          <Route path="/issue" element={<AuthorizedRoute allowedRoles={["manager", "customer"]}><IssuePage /></AuthorizedRoute>} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

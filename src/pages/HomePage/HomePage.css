@@ -1,0 +1,12 @@
+body{
+	margin: 0;
+	padding: 0;
+}
+
+#homePage {
+    margin: 0;
+	padding: 0;
+	min-height: 100vh;
+	font-family: 'Jost', sans-serif;
+	background-image: url("../../../public/images/home_img.png");
+}
