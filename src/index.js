@@ -1,10 +1,10 @@
 import express from "express";
 import bodyParser from "body-parser";
-import {db} from "./config/database.js";
 import sequelize from "./config/database.js";
 import passport from "./config/passport.js";
 import session from "express-session";
 import env from "dotenv";
+import cors from "cors";
 
 import authRoute from "./routes/auth.js";
 import userRoute from "./routes/user.js";
@@ -16,9 +16,8 @@ import complaint_feedbackRoute from "./routes/complaint_feedback.js";
 
 
 const app = express();
-const port = 3000;
+const port = 4000;
 env.config();
-db.connect();
 
 try {
     await sequelize.authenticate();
@@ -31,6 +30,7 @@ try {
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
+app.use(express.json());
 app.use(
     session({
       secret: process.env.SECRET_KEY,
@@ -38,6 +38,7 @@ app.use(
       saveUninitialized: true,
     })
   );
+app.use(cors());
 app.use(passport.initialize());
 app.use(passport.session());
 

@@ -14,6 +14,10 @@ export const getAllOrders = async (req, res) => {
         const { order_from, order_to
             , category, floor, lift_required, customer_name } = req.query
         const where = {};
+        const user = req.user.dataValues;
+        if(user.authentication == "customer"){
+            where.customer_id = {[Op.eq]: user.customer_id}
+        }
         if(order_from){
             where.order_date[Op.gte] = new Date(order_from);
         }
@@ -90,13 +94,15 @@ export const createOrder = async (req, res) => {
             order_date, category, observator, observator_phone_number
             , floor, lift_required, description, customer_name
         } = req.body;
-        const customer_id = (await Customer.findOne({
-            attributes: ["id"]
-        }, {
+        let customer_id = req.user.dataValues.customer_id;
+        if(customer_name){
+            customer_id = (await Customer.findOne( {
             where: {
                 name: customer_name,
             }
         })).dataValues.id;
+        console.log(customer_id)
+    }
         if (!customer_id) {
             return res.status(400).json({ message: "Customer not found" });
         }
@@ -125,7 +131,8 @@ export const editOrderById = async (req, res) => {
         // if(error){
         //     return res.status(400).json(error);
         // }
-        const id = req.params.id
+        const user = req.user.dataValues;
+        const id = req.params.id;
         const {
             order_date, category, observator, observator_phone_number
             , floor, lift_required, description, customer_name
@@ -141,6 +148,9 @@ export const editOrderById = async (req, res) => {
             return res.status(404).json({ message: "Customer not found" });
         }
         const formerOrder = (await Order.findByPk(id)).dataValues;
+        if(user.customer_id != formerOrder.customer_id && user.authentication == "customer"){
+            return res.status(400).json("Permission denied: order not in possession")
+        }
         await Order.update({
             order_date: order_date || formerOrder.order_date,
             category: category || formerOrder.category,
@@ -167,7 +177,12 @@ export const editOrderById = async (req, res) => {
 
 export const deleteOrderById = async (req, res) => {
     try {
-        const id = req.params.id
+        const user = req.user.dataValues;
+        const id = req.params.id;
+        const order = (await Order.findByPk(id)).dataValues;
+        if(user.customer_id != order.customer_id && user.authentication == "customer"){
+            return res.status(400).json("Permission denied: order not in possession")
+        }
         const result = await Order.destroy({
             where: {
                 id: id

@@ -4,7 +4,6 @@ import Customer from "../models/Customer.js";
 import { Op } from "sequelize";
 
 const app = express();
-const route = express.Router();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 

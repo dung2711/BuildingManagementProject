@@ -9,8 +9,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 export const getAllComplaintFeedback = async (req, res) => {
     try {
-        const {types, category} = req.params;
+        const {types, category} = req.query;
         const where = {};
+        const user = req.user.dataValues;
+        if(user.authentication == "customer"){
+            where.user_id = {[Op.eq]: user.email}
+        }
         if(types){
             where.types = {[Op.eq]: types}
         }
@@ -78,11 +82,15 @@ export const editComplaintFeedbackById = async (req, res) => {
         // if(error){
         //     return res.status(400).json(error);
         // }
+        const user = req.user.dataValues;
         const id = req.params.id;
         const { types, category,
             description} = req.body;
         const user_id = req.user.dataValues.email;
         const former = (await Complaint_feedback.findByPk(id)).dataValues;
+        if(user.email != former.user_id){
+            return res.status(400).json("Permission denied: complaint_feedback not in possession")
+        }
         await Complaint_feedback.update({
             types: types || former.types,
             category: category || former.category,
@@ -106,7 +114,12 @@ export const editComplaintFeedbackById = async (req, res) => {
 
 export const deleteComplaintFeedbackById = async (req, res) => {
     try {
+        const user = req.user.dataValues;
         const id = req.params.id;
+        const complaint_feedback = await Complaint_feedback.findByPk(id);
+        if(user.email != complaint_feedback.user_id){
+            return res.status(400).json("Permission denied: complaint_feedback not in possession")
+        }
         await Complaint_feedback.destroy({
             where: {
                 id: id,

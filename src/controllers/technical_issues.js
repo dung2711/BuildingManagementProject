@@ -10,16 +10,17 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 export const getAllIssues = async (req, res) => {
     try {
-        const { name, category, numbers, customer_name } = req.query;
+        const { name, category,  customer_name } = req.query;
         const where = {}
+        const user = req.user.dataValues;
+        if(user.authentication == "customer"){
+            where.customer_id = {[Op.eq]: user.customer_id}
+        }
         if (name) {
             where.name = { [Op.eq]: name };
         }
         if (category) {
             where.category = { [Op.eq]: category };
-        }
-        if (numbers) {
-            where.numbers = { [Op.eq]: numbers };
         }
         if (customer_name) {
             const customer_id = (await Customer.findOne({
@@ -100,6 +101,7 @@ export const editIssueById = async (req, res) => {
         // if (error) {
         //     return res.status(400).json(error);
         // }
+        const user = req.user.dataValues;
         const id = req.params.id;
         const { name, category, numbers,
             description, customer_name } = req.body;
@@ -114,6 +116,9 @@ export const editIssueById = async (req, res) => {
             return res.status(400).json({ message: "Customer not found" });
         }
         const formerIssue = (await Technical_issue.findByPk(id)).dataValues;
+        if(user.customer_id != formerIssue.customer_id && user.authentication == "customer"){
+            return res.status(400).json("Permission denied: issue not in possession")
+        }
         await Technical_issue.update({
             name: name || formerIssue.name,
             category: category || formerIssue.category,
@@ -137,7 +142,12 @@ export const editIssueById = async (req, res) => {
 
 export const deleteIssueById = async (req, res) => {
     try {
+        const user = req.user.dataValues;
         const id = req.params.id;
+        const issue = await Technical_issue.findByPk(id);
+        if(user.customer_id != issue.customer_id && user.authentication == "customer"){
+            return res.status(400).json("Permission denied: issue not in possession")
+        }
         await Technical_issue.destroy({
             where: {
                 id: id,

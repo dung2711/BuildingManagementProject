@@ -3,7 +3,8 @@ import bodyParser from "body-parser";
 import { authenticateJWT, authorizeRoles } from "../middlewares/auth.js";
 import {customerCreateSchema, customerUpdateSchema} from "../validators/customerValidator.js";
 import validate from "../middlewares/validate.js"
-import { getAllCustomers, getCustomerById, createCustomer, editCustomerById, deleteCustomerById } from "../controllers/customer.js";
+import { getAllCustomers, getCustomerById, createCustomer, editCustomerById, deleteCustomerById
+ } from "../controllers/customer.js";
 
 const app = express();
 const route = express.Router();
@@ -11,7 +12,7 @@ const route = express.Router();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
-route.get("/", authenticateJWT, authorizeRoles("manager"), getAllCustomers);
+route.get("/", authenticateJWT, authorizeRoles("manager", "admin", "customer"), getAllCustomers);
 
 route.get("/:id", authenticateJWT, authorizeRoles("manager"), getCustomerById);
 

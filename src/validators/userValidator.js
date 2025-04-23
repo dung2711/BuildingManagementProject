@@ -7,7 +7,12 @@ export const userCreateSchema = Joi.object({
     name: Joi.string().max(40),
     phone_number: Joi.string().max(20).pattern(/^[0-9]{10,15}$/),
     identification: Joi.string().max(20).pattern(/^[0-9]{10,15}$/),
-    customer_name: Joi.string().max(100),
+    customer_name: Joi.string().max(100).when("authentication", {
+        is: "customer",
+        then: Joi.required().messages({
+          "any.required": "customer_name is required when role is 'customer'",
+        })
+      }),
 })
 
 export const userUpdateSchema = Joi.object({

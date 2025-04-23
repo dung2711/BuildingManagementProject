@@ -69,9 +69,25 @@ export const createUser = async (req, res) => {
         // if (error) {
         //     return res.status(400).json(error);
         // }
-        const email = req.body.email;
-        const password = req.body.password;
-        const role = req.body.authentication;
+        console.log("📤 Creating user:", req.body);
+        const { email, password, authentication,
+            name, phone_number, identification, customer_name } = req.body;
+        let customer_id = null;
+        if (customer_name) {
+            try {
+                customer_id = (await Customer.findOne({
+                    where: {
+                        name: customer_name
+                    }
+                })).dataValues.id;
+                console.log(customer_id)
+                if(!customer_id){
+                    res.status(400).json("Customer not found");
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
         const checkResult = await User.findOne({
             where: {
                 email: email,
@@ -90,7 +106,11 @@ export const createUser = async (req, res) => {
                     const result = await User.create({
                         email: email,
                         password: hash,
-                        authentication: role
+                        authentication: authentication,
+                        name: name,
+                        phone_number: phone_number,
+                        identification: identification,
+                        customer_id: customer_id
                     })
                     const user = result.dataValues;
                     req.login(user, (err) => {
@@ -118,15 +138,20 @@ export const editUserById = async (req, res) => {
         const phone_number = req.body.phone_number;
         const authentication = req.body.authentication;
         const identification = req.body.identification;
-        const customer_name = req.body.company;
-        const customer_id = null;
+        const customer_name = req.body.customer_name;
+        let customer_id = null;
         if (customer_name) {
-            customer_id = await Customer.findOne({
-                where: {
-                    name: customer_name
-                }
-            });
+            try {
+                customer_id = (await Customer.findOne({
+                    where: {
+                        name: customer_name
+                    }
+                })).dataValues.id;
+            } catch (error) {
+                console.log(error)
+            }
         }
+        console.log(customer_id)
         const formerUser = await User.findByPk(id);
         await User.update({
             name: name || formerUser.name,
@@ -147,7 +172,7 @@ export const editUserById = async (req, res) => {
         res.status(200).json(user);
     } catch (error) {
         res.status(500).json({
-            message: "Failed to fetch user",
+            message: "Failed to update user",
             error: error
         });
     }

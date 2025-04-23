@@ -9,7 +9,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 export const getAllProperties = async (req, res) => {
     try {
-        const {name, category, numbers} = req.query;
+        const {name, category} = req.query;
                 const where = {}
                 if(name){
                     where.name = {[Op.eq]: name};
@@ -17,9 +17,7 @@ export const getAllProperties = async (req, res) => {
                 if(category){
                     where.category = {[Op.eq]: category};
                 }
-                if(numbers){
-                    where.numbers = {[Op.eq]: numbers};
-                }
+
         const properties = await Property.findAll({
             where: where
         });
