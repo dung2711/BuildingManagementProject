@@ -13,5 +13,6 @@ export const technical_issueUpdateSchema = Joi.object({
     category: Joi.string().max(30),
     numbers: Joi.number().integer(),
     description: Joi.string().max(1000),
+    status: Joi.string().max(20),
     customer_name: Joi.string().max(100),
 })

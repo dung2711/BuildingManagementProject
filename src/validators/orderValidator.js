@@ -19,6 +19,7 @@ export const orderUpdateSchema = Joi.object({
     floor: Joi.number().integer(),
     lift_required: Joi.string(),
     description: Joi.string().max(1000),
+    status: Joi.string().max(20).required(),
     customer_name: Joi.string().max(100),
 })
 

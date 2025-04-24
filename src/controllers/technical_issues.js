@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 export const getAllIssues = async (req, res) => {
     try {
-        const { name, category,  customer_name } = req.query;
+        const { name, category,  customer_name, status } = req.query;
         const where = {}
         const user = req.user.dataValues;
         if(user.authentication == "customer"){
@@ -21,6 +21,9 @@ export const getAllIssues = async (req, res) => {
         }
         if (category) {
             where.category = { [Op.eq]: category };
+        }
+        if(status) {
+            where.status = { [Op.eq]: status };
         }
         if (customer_name) {
             const customer_id = (await Customer.findOne({
@@ -69,7 +72,8 @@ export const createIssue = async (req, res) => {
         // if (error) {
         //     return res.status(400).json(error);
         // }
-        const { name, category, numbers,
+        console.log(req.body)
+        const { name, category, 
             description, customer_name } = req.body;
         const customer_id = (await Customer.findOne({
             where: {
@@ -82,8 +86,8 @@ export const createIssue = async (req, res) => {
         const issue = await Technical_issue.create({
             name: name,
             category: category,
-            numbers: numbers,
             description: description,
+            status: "Đang xử lý",
             customer_id: customer_id
         })
         res.status(200).json(issue.dataValues);
@@ -103,8 +107,8 @@ export const editIssueById = async (req, res) => {
         // }
         const user = req.user.dataValues;
         const id = req.params.id;
-        const { name, category, numbers,
-            description, customer_name } = req.body;
+        const { name, category, 
+            description, status, customer_name } = req.body;
         const customer_id = (await Customer.findOne({
             attributes: ["id"]
         }, {
@@ -122,8 +126,8 @@ export const editIssueById = async (req, res) => {
         await Technical_issue.update({
             name: name || formerIssue.name,
             category: category || formerIssue.category,
-            numbers: numbers || formerIssue.numbers,
             description: description || formerIssue.description,
+            status: status || formerIssue.status,
             customer_id: customer_id || formerIssue.customer_id
         }, {
             where: {

@@ -34,6 +34,11 @@ const Order = sequelize.define('Order', {
     type: DataTypes.STRING(1000),
     allowNull: false
   },
+  status: {
+    type: DataTypes.STRING(20),
+    allowNull: true
+  },
+
   customer_id: {
     type: DataTypes.INTEGER,
     allowNull: false

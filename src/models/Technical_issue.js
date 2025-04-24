@@ -16,8 +16,8 @@ const Technical_issue = sequelize.define('Technical_issue', {
     type: DataTypes.STRING(30),
     allowNull: false
   },
-  numbers: {
-    type: DataTypes.INTEGER,
+  status: {
+    type: DataTypes.STRING(20),
     allowNull: true
   },
   description: {

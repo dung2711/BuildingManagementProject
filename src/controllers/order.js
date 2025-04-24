@@ -11,8 +11,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 export const getAllOrders = async (req, res) => {
     try {
+        console.log(req.query)
         const { order_from, order_to
-            , category, floor, lift_required, customer_name } = req.query
+            , category, floor, lift_required, customer_name, status } = req.query
         const where = {};
         const user = req.user.dataValues;
         if(user.authentication == "customer"){
@@ -32,6 +33,9 @@ export const getAllOrders = async (req, res) => {
         }
         if(lift_required){
             where.lift_required = {[Op.eq]: lift_required}
+        }
+        if(status){
+            where.status = {[Op.eq]: status}
         }
         if (customer_name) {
             const customer_id = (await Customer.findOne({
@@ -114,6 +118,7 @@ export const createOrder = async (req, res) => {
             floor: floor,
             lift_required: lift_required,
             description: description,
+            status: "Đang xử lý",
             customer_id: customer_id
         });
         res.status(200).json(result.dataValues);
@@ -135,7 +140,7 @@ export const editOrderById = async (req, res) => {
         const id = req.params.id;
         const {
             order_date, category, observator, observator_phone_number
-            , floor, lift_required, description, customer_name
+            , floor, lift_required, description, status, customer_name
         } = req.body;
         const customer_id = (await Customer.findOne({
             attributes: ["id"]
@@ -159,6 +164,7 @@ export const editOrderById = async (req, res) => {
             floor: floor || formerOrder.floor,
             lift_required: lift_required || formerOrder.lift_required,
             description: description || formerOrder.description,
+            status: status || formerOrder.status,
             customer_id: customer_id || formerOrder.customer_id
         }, {
             where: {
