@@ -3,10 +3,10 @@ import axiosClient from "./axios"
 export const getOrders = async (filters = {}) => {
     if(!filters) return axiosClient.get("/order");
     const { order_from, order_to
-        , category, floor, lift_required, customer_name } = filters;
+        , category, floor, lift_required, status, customer_name } = filters;
     return axiosClient.get("/order", {
         params: {
-            order_from, order_to, category, floor, lift_required, customer_name
+            order_from, order_to, category, floor, status, lift_required, customer_name
         }
     });
 }
@@ -27,11 +27,11 @@ export const createOrder = async ({
 
 export const updateOrder = async ({id,
     order_date, category, observator, observator_phone_number
-    , floor, lift_required, description, customer_name
+    , floor, lift_required, status, description, customer_name
 }) => {
     return axiosClient.patch(`/order/${id}`, {
         order_date, category, observator, observator_phone_number
-        , floor, lift_required, description, customer_name
+        , floor, lift_required, status, description, customer_name
     })
 }
 

@@ -58,13 +58,6 @@ export default function IssueForm({ initialData = {}, onSubmit, closeForm, role 
                     onChange={handleChange}
                     required
                 />
-                <input
-                    type="text"
-                    name="numbers"
-                    value={formData.numbers || ""}
-                    placeholder="Numbers"
-                    onChange={handleChange}
-                />
                 <textarea
                     name="description"
                     value={formData.description || ""}

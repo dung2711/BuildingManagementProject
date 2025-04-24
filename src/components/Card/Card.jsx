@@ -1,9 +1,34 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import "./Card.css";
+import { updateOrder } from "../../api/orderApi";
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { updateIssue } from "../../api/issueApi";
 
-export default function Card({ data, type, openForm, deleteItem }) {
+export default function Card({ data, type, openForm, deleteItem, role }) {
+    const [status, setStatus] = useState("");
+    useEffect(() => {
+        if (data.status) {
+            setStatus(data.status);
+        }
+    }, [data.status]);
+
+    const changeOrderStatus = async (newStatus) => {
+        setStatus(newStatus);
+        try {
+            await updateOrder({id: data.id, status: newStatus });
+        } catch (error) {
+            console.error("Failed to update order status", error);
+        }
+    }
+    const changeIssueStatus = async (newStatus) => {
+        setStatus(newStatus);
+        try {
+            await updateIssue({id: data.id, status: newStatus });
+        } catch (error) {
+            console.error("Failed to update issue status", error);
+        }
+    }
     return (
         <div className="card">
             {type === "user" && <div>
@@ -47,7 +72,11 @@ export default function Card({ data, type, openForm, deleteItem }) {
                 {data.lift_required && <p><strong>Lift Required: </strong> {data.lift_required}</p>}
                 {data.description && <p><strong>Description</strong> {data.description}</p>}
                 {data.customer.name && <p><strong>Customer Name: </strong> {data.customer.name}</p>}
+                <p><strong>Status: </strong> {status}</p>
                 <div className="card-actions">
+                    {role ==="manager" && data.status !== "Đã hủy" &&  <button className="action-button" onClick={() => changeOrderStatus("Chấp nhận")}>Accept</button>}
+                    {role ==="manager" && data.status !== "Đã hủy" &&  <button className="action-button" onClick={() => changeOrderStatus("Từ chối")}>Deny</button>}
+                    {role ==="customer" && <button className="action-button" onClick={() => changeOrderStatus("Đã hủy")}>Cancel</button>}
                     <button className="edit-button" onClick={() => openForm(data)}><EditSquareIcon /></button>
                     <button className="delete-button" onClick={() => deleteItem(data.id)}><DeleteIcon /></button>
                 </div>
@@ -82,7 +111,11 @@ export default function Card({ data, type, openForm, deleteItem }) {
                 {data.description && <p><strong>Description</strong> {data.description}</p>}
                 {data.numbers && <p><strong>Numbers: </strong> {data.numbers}</p>}
                 {data.customer.name && <p><strong>Customer Name: </strong> {data.customer.name}</p>}
+                <p><strong>Status: </strong> {status}</p>
                 <div className="card-actions">
+                {role ==="manager" && data.status !== "Đã hủy" &&  <button className="action-button" onClick={() => changeIssueStatus("Chấp nhận")}>Accept</button>}
+                    {role ==="manager" && data.status !== "Đã hủy" &&  <button className="action-button" onClick={() => changeIssueStatus("Từ chối")}>Deny</button>}
+                    {role ==="customer" && <button className="action-button" onClick={() => changeIssueStatus("Đã hủy")}>Cancel</button>}
                     <button className="edit-button" onClick={() => openForm(data)}><EditSquareIcon /></button>
                     <button className="delete-button" onClick={() => deleteItem(data.id)}><DeleteIcon /></button>
                 </div>

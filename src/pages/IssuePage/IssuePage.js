@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import { getIssues, createIssue, updateIssue, deleteIssue } from "../../api/issueApi";
 import { getCustomers } from "../../api/customerApi";
 import NavBar from "../../components/NavBar/NavBar";
-import Card from "../../components/Card/Card";
 import "./IssuePage.css";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import IssueForm from "../../components/IssueForm/IssueForm";
 import { useAuth } from "../../contexts/AuthContext";
 import FilterForm from "../../components/FilterForm/FilterForm";
+import GeneralCard from "../../components/GeneralCard/GeneralCard";
+import DetailCard from "../../components/DetailCard/DetailCard";
 
 function IssuePage() {
     const [addIssueFormOpened, setAddIssueFormOpened] = useState(false);
@@ -15,8 +16,16 @@ function IssuePage() {
     const [initialData, setInitialData] = useState({});
     const [issues, setIssues] = useState([]);
     const [customers, setCustomers] = useState([]);
+    const [openDetail, setOpenDetail] = useState(false);
+    const [currentIssue, setCurrentIssue] = useState({});
     const {role} = useAuth();
-    const filterFields = [
+    const filterFields = 
+    [   {name: "status", type: "select", placeholder: "Status", options: [
+        { value: "Đang xử lý", label: "Đang xử lý" },
+        { value: "Đã hủy", label: "Đã hủy" },
+        { value: "Chấp nhận", label: "Chấp nhận" },
+        { value: "Từ chối", label: "Từ chối" }
+    ]},
         { name: "name", type: "text", placeholder: "Issue Name" },
         { name: "category", type: "text", placeholder: "Category" },
         { name: "customer_name", type: "text", placeholder: "Customer Name" }
@@ -53,6 +62,17 @@ function IssuePage() {
         setUpdateIssueFormOpened(false);
     };
 
+    const openDetailCard = (issueData) => {
+        setOpenDetail(true);
+        setCurrentIssue(issueData);
+    };
+
+    const closeDetailCard = async () => {
+        setOpenDetail(false);
+        const res = await getIssues();
+        setIssues(res.data);
+        setCurrentIssue({});
+    };
     const handleAddIssue = async (issueData) => {
         try {
             console.log("📤 Adding issue:", issueData);
@@ -72,6 +92,11 @@ function IssuePage() {
             closeUpdateIssueForm();
             const res = await getIssues();
             setIssues(res.data);
+            if (openDetail) {
+                const updateIssue = res.data.find(i => i.id === issueData.id);
+                const customer = customers.find(c => c.id === updateIssue.customer_id);
+                setCurrentIssue({ ...updateIssue, customer });
+            }
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
         }
@@ -81,6 +106,8 @@ function IssuePage() {
         try {
             console.log("📤 Deleting issue:", issueId);
             await deleteIssue(issueId);
+            setOpenDetail(false);
+            setCurrentIssue({});
             const res = await getIssues();
             setIssues(res.data);
         } catch (error) {
@@ -105,18 +132,18 @@ function IssuePage() {
                 {issues.map((issue) => {
                     const customer = customers.find((customer) => customer.id === issue.customer_id);
                     return (
-                    <Card
+                    <GeneralCard
                         data={{...issue, customer}}
                         key={issue.id}
                         type="issue"
-                        openForm={openUpdateIssueForm}
-                        deleteItem={deleteOneIssue}
+                        openDetailCard={openDetailCard}
                     />
                 )})}
             </div>
             <button id="addIcon" onClick={openAddIssueForm}>
                 <AddCircleOutlineIcon />
             </button>
+            {openDetail && <DetailCard data={currentIssue} type="issue" closeForm={closeDetailCard} openForm={openUpdateIssueForm} deleteItem={deleteOneIssue} role={role}/>}
             {addIssueFormOpened && <IssueForm initialData={""} onSubmit={handleAddIssue} closeForm={closeAddIssueForm} role={role} />}
             {updateIssueFormOpened && <IssueForm initialData={initialData} onSubmit={handleUpdateIssue} closeForm={closeUpdateIssueForm} role={role} />}
         </div>
