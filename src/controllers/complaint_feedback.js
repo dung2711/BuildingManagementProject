@@ -22,7 +22,8 @@ export const getAllComplaintFeedback = async (req, res) => {
             where.category = {[Op.eq]: category}
         }
         const complaint_feedback = await Complaint_feedback.findAll({
-            where: where
+            where: where,
+            order: [['id', 'DESC']]
         });
         if (!complaint_feedback) {
             return res.status(404).json({ message: "Complaint_feedback not found" });

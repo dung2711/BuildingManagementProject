@@ -36,7 +36,11 @@ export const getAllIssues = async (req, res) => {
             where.customer_id = { [Op.eq]: customer_id }
         }
         const issue = await Technical_issue.findAll({
-            where: where
+            where: where,
+            order: [
+
+                ['id', 'DESC']
+            ]
         });
         if (!issue) {
             return res.status(404).json({ message: "Technical_issue not found" });

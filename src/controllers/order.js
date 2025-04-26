@@ -48,7 +48,8 @@ export const getAllOrders = async (req, res) => {
             where.customer_id = {[Op.eq]: customer_id}
         }
         const orders = await Order.findAll({
-            where: where
+            where: where,
+            order: [['id', 'DESC']]
         });
         if (!orders) {
             return res.status(404).json({ message: "Order not found" });

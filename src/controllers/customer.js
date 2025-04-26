@@ -27,7 +27,10 @@ export const getAllCustomers = async (req, res) => {
             where.director_name = {[Op.iLike] : `%${director_name}%`};
         }
         const customers = await Customer.findAll({
-            where: where
+            where: where,
+            order: [
+                ['id', 'DESC']
+            ]
         });
         if (!customers) {
             return res.status(404).json({ message: "Customer not found" });

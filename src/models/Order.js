@@ -27,7 +27,7 @@ const Order = sequelize.define('Order', {
     allowNull: false
   },
   lift_required: {
-    type: DataTypes.STRING(10),
+    type: DataTypes.STRING(100),
     allowNull: false
   },
   description: {

@@ -33,7 +33,8 @@ export const getAllUsers = async (req, res) => {
             where.customer_id = { [Op.eq]: customer_id };
         }
         const users = await User.findAll({
-            where: where
+            where: where,
+            order: [['email', 'DESC']]
         });
         if (!users) return res.status(404).json({ message: "User not found" });
         res.status(200).json(users);

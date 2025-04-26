@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 route.get("/", authenticateJWT, authorizeRoles("admin"), getAllUsers)
 
-route.get("/:id", authenticateJWT, authorizeRoles("admin"), getUserById)
+route.get("/:id", authenticateJWT, authorizeRoles("admin","customer"), getUserById)
 
 route.post("/", authenticateJWT, authorizeRoles("admin"), validate(userCreateSchema), createUser);
 

@@ -19,7 +19,11 @@ export const getAllProperties = async (req, res) => {
                 }
 
         const properties = await Property.findAll({
-            where: where
+            where: where,
+            order: [
+
+                ['id', 'DESC']
+            ]
         });
         if(!properties){
             return res.status(404).json({ message: "Property not found" });

@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 route.get("/", authenticateJWT, authorizeRoles("manager", "admin", "customer"), getAllCustomers);
 
-route.get("/:id", authenticateJWT, authorizeRoles("manager"), getCustomerById);
+route.get("/:id", authenticateJWT, authorizeRoles("manager", "customer"), getCustomerById);
 
 route.post("/", authenticateJWT, authorizeRoles("manager"), validate(customerCreateSchema), createCustomer);
 
