@@ -94,7 +94,7 @@
     transition: background 0.2s;
 }
 
-#deny-button{
+#deny-button, #cancel-button {
     background-color: rgb(221, 36, 36);
 }
 

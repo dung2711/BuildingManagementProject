@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { getUser, register, updateUser, deleteUser } from "../../api/userApi";
-import NavBar from "../../components/NavBar/NavBar";
-import Card from "../../components/Card/Card";
-import "./UserPage.css";
+import { getUser, register, updateUser, deleteUser } from "../api/userApi";
+import NavBar from "../components/NavBar/NavBar";
+import Card from "../components/Card/Card";
+import "./Page.css";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import UserForm from "../../components/UserForm/UserForm";
-import { getCustomers } from "../../api/customerApi";
-import FilterForm from "../../components/FilterForm/FilterForm";
+import UserForm from "../components/Form/UserForm";
+import { getCustomers } from "../api/customerApi";
+import FilterForm from "../components/FilterForm/FilterForm";
 
 function UserPage() {
     const [addUserFormOpened, setAddUserFormOpened] = useState(false);
@@ -97,14 +97,14 @@ function UserPage() {
 
             <FilterForm onFilter={userFilter} fields={filterFields}/>
 
-            <div id="user-section">
+            <div className="data-section">
                 {users.map((user) => {
                     const customer = customers.find(customer => customer.id === user.customer_id);
                     return <Card data={{...user, customer}} key={user.email} type="user"
                         openForm={openUpdateUserForm} deleteItem={deleteOneUser} />
                 })}
             </div>
-            <button id="addIcon" onClick={openAddUserForm}>
+            <button className="addIcon" onClick={openAddUserForm}>
                 <AddCircleOutlineIcon />
             </button>
             {addUserFormOpened && <UserForm initialData={""} onSubmit={handleAddUser} closeForm={closeAddUserForm} />}

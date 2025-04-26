@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import "./ComplaintForm.css";
+import "./Form.css";
+import { ArrowBackOutlined } from "@mui/icons-material";
+
+const categories = [
+    "Vệ sinh",
+    "Bảo vệ",
+    "Tiếng ồn",
+    "Tiện ích",
+    "Dịch vụ khách hàng"
+];
 
 export default function ComplaintForm({ initialData = {}, onSubmit, closeForm }) {
     const [formData, setFormData] = useState({
@@ -42,24 +51,32 @@ export default function ComplaintForm({ initialData = {}, onSubmit, closeForm })
 
     return (
         <div className="form-container">
-            <form onSubmit={handleSubmit} id="complaint-form">
-
-                <input
-                    type="text"
+            <form onSubmit={handleSubmit} className="form">
+                {initialData.id? <h1>Update complaint/feedback</h1> : <h1>Add complaint/feedback</h1>}
+                <select
                     name="types"
-                    value={formData.types || ""}
-                    placeholder="Type"
+                    value={formData.types}
                     onChange={handleChange}
                     required
-                />
-                <input
-                    type="text"
+                >   
+                    <option value="" disabled hidden>-- Chọn loại khiếu nại --</option>
+                    <option value="Khiếu nại">Khiếu nại</option>
+                    <option value="Góp ý">Góp ý</option>
+                    <option value="Khác">Khác</option>
+                </select>
+                <select
                     name="category"
-                    value={formData.category || ""}
-                    placeholder="Category"
+                    value={formData.category}
                     onChange={handleChange}
                     required
-                />
+                >   
+                    <option value="" disabled hidden>-- Chọn hạng mục --</option>
+                    {categories.map((category) => {
+                        return (
+                            <option value={category}>{category}</option>
+                        )
+                    })}
+                </select>
                 <textarea
                     name="description"
                     value={formData.description || ""}
@@ -67,8 +84,8 @@ export default function ComplaintForm({ initialData = {}, onSubmit, closeForm })
                     onChange={handleChange}
                     required
                 />
-                <button type="submit">{initialData.id ? "Update" : "Add"} Complaint</button>
-                <button type="button" onClick={closeForm}>Close</button>
+                <button type="submit" className="add-button">{initialData.id ? "Update" : "Add"} Complaint</button>
+                <button type="button" className="closeForm-button" onClick={closeForm}><ArrowBackOutlined /></button>
             </form>
         </div>
     );

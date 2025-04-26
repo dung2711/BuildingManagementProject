@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { getIssues, createIssue, updateIssue, deleteIssue } from "../../api/issueApi";
-import { getCustomers } from "../../api/customerApi";
-import NavBar from "../../components/NavBar/NavBar";
-import "./IssuePage.css";
+import { getIssues, createIssue, updateIssue, deleteIssue } from "../api/issueApi";
+import { getCustomers } from "../api/customerApi";
+import NavBar from "../components/NavBar/NavBar";
+import "./Page.css";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import IssueForm from "../../components/IssueForm/IssueForm";
-import { useAuth } from "../../contexts/AuthContext";
-import FilterForm from "../../components/FilterForm/FilterForm";
-import GeneralCard from "../../components/GeneralCard/GeneralCard";
-import DetailCard from "../../components/DetailCard/DetailCard";
+import IssueForm from "../components/Form/IssueForm";
+import { useAuth } from "../contexts/AuthContext";
+import FilterForm from "../components/FilterForm/FilterForm";
+import GeneralCard from "../components/GeneralCard/GeneralCard";
+import DetailCard from "../components/DetailCard/DetailCard";
 
 function IssuePage() {
     const [addIssueFormOpened, setAddIssueFormOpened] = useState(false);
@@ -126,9 +126,9 @@ function IssuePage() {
         <div>
             <NavBar />
 
-            <FilterForm onFilter={filterIssues} fields={filterFields}/>
+            {role ==="manager" && <FilterForm onFilter={filterIssues} fields={filterFields}/>}
 
-            <div id="issue-section">
+            <div className="data-section">
                 {issues.map((issue) => {
                     const customer = customers.find((customer) => customer.id === issue.customer_id);
                     return (
@@ -140,11 +140,11 @@ function IssuePage() {
                     />
                 )})}
             </div>
-            <button id="addIcon" onClick={openAddIssueForm}>
+            <button className="addIcon" onClick={openAddIssueForm}>
                 <AddCircleOutlineIcon />
             </button>
             {openDetail && <DetailCard data={currentIssue} type="issue" closeForm={closeDetailCard} openForm={openUpdateIssueForm} deleteItem={deleteOneIssue} role={role}/>}
-            {addIssueFormOpened && <IssueForm initialData={""} onSubmit={handleAddIssue} closeForm={closeAddIssueForm} role={role} />}
+            {addIssueFormOpened && <IssueForm onSubmit={handleAddIssue} closeForm={closeAddIssueForm} role={role} />}
             {updateIssueFormOpened && <IssueForm initialData={initialData} onSubmit={handleUpdateIssue} closeForm={closeUpdateIssueForm} role={role} />}
         </div>
     );

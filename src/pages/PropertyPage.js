@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { getProperties, createProperty, updateProperty, deleteProperty } from "../../api/propertyApi";
-import NavBar from "../../components/NavBar/NavBar";
-import Card from "../../components/Card/Card";
-import "./PropertyPage.css";
+import { getProperties, createProperty, updateProperty, deleteProperty } from "../api/propertyApi";
+import NavBar from "../components/NavBar/NavBar";
+import Card from "../components/Card/Card";
+import "./Page.css";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import PropertyForm from "../../components/PropertyForm/PropertyForm";
-import FilterForm from "../../components/FilterForm/FilterForm";
+import PropertyForm from "../components/Form/PropertyForm";
+import FilterForm from "../components/FilterForm/FilterForm";
 
 function PropertyPage() {
     const [addPropertyFormOpened, setAddPropertyFormOpened] = useState(false);
@@ -92,7 +92,7 @@ function PropertyPage() {
 
             <FilterForm onFilter={filterProperties} fields={filterFields}/>
 
-            <div id="property-section">
+            <div className="data-section">
                 {properties.map((property) => (
                     <Card
                         data={property}
@@ -103,7 +103,7 @@ function PropertyPage() {
                     />
                 ))}
             </div>
-            <button id="addIcon" onClick={openAddPropertyForm}>
+            <button className="addIcon" onClick={openAddPropertyForm}>
                 <AddCircleOutlineIcon />
             </button>
             {addPropertyFormOpened && <PropertyForm initialData={""} onSubmit={handleAddProperty} closeForm={closeAddPropertyForm} />}

@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
 
+
 export function AuthProvider({children}){
     const [token, setToken] = useState("");
     const [role, setRole] = useState("");
@@ -18,6 +19,7 @@ export function AuthProvider({children}){
         localStorage.setItem("role", userRole);
     }
     const logout = () => {
+        console.log("Logout function called");
         setToken("");
         setRole("");
         localStorage.removeItem("token");

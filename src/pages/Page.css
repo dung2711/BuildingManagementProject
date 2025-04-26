@@ -1,0 +1,34 @@
+.data-section{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid;
+    background-color: #1e94cb;
+    padding: 0px 20px;
+    margin: 0px 180px;
+}
+
+.addIcon {
+    font-size: 2rem; /* Size icon, bạn có thể chỉnh nếu muốn to hơn */
+    position: fixed;
+    right: 40px;
+    bottom: 40px;
+    width: 70px;
+    height: 70px;
+    background-color: #1e94cb; /* Màu nền */
+    color: white; /* Màu icon */
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); /* Đổ bóng */
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.addIcon:hover {
+    background-color: #147ba6; /* Màu hover */
+    transform: scale(1.1); /* Phóng to khi hover */
+}
+

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import "./CustomerForm.css"
+import "./Form.css"
+import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 
 export default function UserForm({ initialData = {}, onSubmit, closeForm }) {
     const [formData, setFormData] = useState({
@@ -51,7 +52,8 @@ export default function UserForm({ initialData = {}, onSubmit, closeForm }) {
     };
     return (
         <div className="form-container">
-            <form onSubmit={handleSubmit} id="customer-form">
+            <form onSubmit={handleSubmit} className="form">
+                {initialData.id ? <h1>Edit Customer</h1> : <h1>Add Customer</h1>}
                 <input
                     type="text"
                     name="name"
@@ -122,8 +124,8 @@ export default function UserForm({ initialData = {}, onSubmit, closeForm }) {
                 />
 
 
-                <button type="submit">{initialData.id ? "Update" : "Add"} Customer</button>
-                <button type="button" onClick={closeForm}>Close</button>
+                <button type="submit" className="add-button">{initialData.id ? "Update" : "Add"} Customer</button>
+                <button type="button" className="closeForm-button" onClick={closeForm}><ArrowBackOutlinedIcon /></button>
             </form>
         </div>
     );

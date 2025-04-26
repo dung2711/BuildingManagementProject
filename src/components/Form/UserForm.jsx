@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import "./UserForm.css"
+import "./Form.css"
+import { ArrowBackOutlined } from "@mui/icons-material";
 
 export default function UserForm({ initialData ={} , onSubmit, closeForm }) {
     const [formData, setFormData] = useState({
@@ -48,7 +49,8 @@ export default function UserForm({ initialData ={} , onSubmit, closeForm }) {
     };
     return (
         <div className="form-container">
-        <form onSubmit={handleSubmit} id="user-form">
+        <form onSubmit={handleSubmit} className ="form">
+            {initialData.id? <h1>Update User</h1> : <h1>Add User</h1>}
             <input
                 type="email"
                 name="email"
@@ -82,6 +84,7 @@ export default function UserForm({ initialData ={} , onSubmit, closeForm }) {
                 value={formData.name || ""}
                 placeholder="Name"
                 onChange={handleChange}
+                required
             />
 
             <input
@@ -90,6 +93,7 @@ export default function UserForm({ initialData ={} , onSubmit, closeForm }) {
                 value={formData.phone_number || ""}
                 placeholder="Phone Number"
                 onChange={handleChange}
+                required
             />
 
             <input
@@ -98,6 +102,7 @@ export default function UserForm({ initialData ={} , onSubmit, closeForm }) {
                 value={formData.identification || ""}
                 placeholder="Identification"
                 onChange={handleChange}
+                required
             />
 
              
@@ -110,8 +115,8 @@ export default function UserForm({ initialData ={} , onSubmit, closeForm }) {
                 />
             
 
-            <button type="submit">{initialData.email ? "Update" : "Add"} User</button>
-            <button type="button" onClick={closeForm}>Close</button>
+            <button type="submit" className="add-button">{initialData.email ? "Update" : "Add"} User</button>
+            <button type="button" className="closeForm-button" onClick={closeForm}><ArrowBackOutlined /></button>
         </form>
         </div> 
     );

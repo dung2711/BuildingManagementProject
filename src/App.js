@@ -4,12 +4,12 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import AuthorizedRoute from "./routes/AuthorizedRoute";
 import HomePage from "./pages/HomePage/HomePage";
-import UserPage from "./pages/UserPage/UserPage";
-import CustomerPage from "./pages/CustomerPage/CustomerPage";
-import OrderPage from "./pages/OrderPage/OrderPage";
-import PropertyPage from "./pages/PropertyPage/PropertyPage";
-import ComplaintPage from "./pages/ComplaintPage/ComplaintPage";
-import IssuePage from "./pages/IssuePage/IssuePage";
+import UserPage from "./pages/UserPage";
+import CustomerPage from "./pages/CustomerPage";
+import OrderPage from "./pages/OrderPage";
+import PropertyPage from "./pages/PropertyPage";
+import ComplaintPage from "./pages/ComplaintPage";
+import IssuePage from "./pages/IssuePage";
 
 function App() {
   return (

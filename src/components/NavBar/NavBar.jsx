@@ -1,9 +1,11 @@
 import React from "react";
 import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import "./NavBar.css"
 
 export default function NavBar() {
     const { token, role, logout } = useAuth();
+    const navigate = useNavigate();
     return (
         <nav>
             <ul>
@@ -19,20 +21,20 @@ export default function NavBar() {
                     </a>
                     </li>
                 )}
-                {role === "manager" && (
+                {token && role === "manager" && (
                     <li><a href="/customer">
                         Customer
                     </a>
                     </li>
                 )}
 
-                {role === "customer" && (
+                {token &&role !== "admin" && (
                     <li><a href="/complaint">
                         Complaint/Feedback
                     </a>
                     </li>
                 )}
-                {role === "manager" && (
+                {token && role === "manager" && (
                     <li><a href="/property">
                         Property
                     </a>
@@ -52,7 +54,10 @@ export default function NavBar() {
                     </li>
                 )}
                 {token && (
-                    <li><a onClick={logout}>
+                    <li><a onClick={(event) => {
+                            logout();
+                            navigate("/");
+                    }}>
                         Logout
                     </a>
                     </li>

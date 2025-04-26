@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
-import "./OrderForm.css";
+import "./Form.css";
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
+import DatePicker from "react-horizontal-datepicker";
+import dayjs from "dayjs";
+
+const categories = [
+    "Vận chuyển ra khỏi tòa nhà",
+    "Vận chuyển vào tòa nhà",
+    "Vận chuyển giữa các tầng",
+];
 
 export default function OrderForm({ initialData = {}, onSubmit, closeForm, role }) {
     const [formData, setFormData] = useState({
@@ -9,9 +17,9 @@ export default function OrderForm({ initialData = {}, onSubmit, closeForm, role 
         observator: "",
         observator_phone_number: "",
         floor: "",
-        lift_required: "Yes",
+        lift_required: "Cần thang máy",
         description: "",
-        customer_name: "" || initialData?.customer?.name,
+        customer_name: "" || initialData?.customer?.name || initialData?.customer_name,
     });
 
     useEffect(() => {
@@ -30,9 +38,18 @@ export default function OrderForm({ initialData = {}, onSubmit, closeForm, role 
             [name]: value,
         }));
     };
+    const handleDateChange = (date) => {
+        const formattedDate = dayjs(date).format("YYYY-MM-DD");
+        setFormData(prev => ({
+            ...prev,
+            order_date: formattedDate,
+        }));
+        console.log(formData.order_date);
+    }
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        console.log("Form data:", formData.order_date);
         const dataToSubmit = { ...formData };
         if(dataToSubmit.observator_phone_number === "" || dataToSubmit.observator_phone_number === null) {
             delete dataToSubmit.observator_phone_number;
@@ -48,25 +65,26 @@ export default function OrderForm({ initialData = {}, onSubmit, closeForm, role 
 
     return (
         <div className="form-container">
-            <div id="order-form">
+            <div className="form">
             {initialData.id ? <h1>Sửa lịch vận chuyển</h1> : <h1>Đặt lịch vận chuyển</h1>}
             <form onSubmit={handleSubmit}>
-                <input
-                    type="date"
-                    name="order_date"
-                    value={formData.order_date || ""}
-                    placeholder="Order Date"
-                    onChange={handleChange}
-                    required
+                <DatePicker 
+                getSelectedDay={handleDateChange}
+                endDate={30}
+                color={'#1e94cb'}
                 />
-                <input
-                    type="text"
+                <select
                     name="category"
-                    value={formData.category || ""}
-                    placeholder="Category"
+                    value={formData.category}
                     onChange={handleChange}
                     required
-                />
+                >
+                    <option value="" disabled hidden>-- Chọn loại dịch vụ --</option>
+                    {categories.map((category, index) => (
+                        <option key={index} value={category}>{category}</option>
+                    ))}
+                    
+                </select>
                 <input
                     type="text"
                     name="observator"
@@ -96,19 +114,19 @@ export default function OrderForm({ initialData = {}, onSubmit, closeForm, role 
                     onChange={handleChange}
                     required
                 >
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
+                    <option value="Cần thang máy">Cần thang máy</option>
+                    <option value="Không cần thang máy">Không cần thang máy</option>
 
                 </select>
 
-                {role==="manager" && <input
+                <input
                     type="text"
                     name="customer_name"
                     value={formData.customer_name || ""}
                     placeholder="Customer Name"
                     onChange={handleChange}
                     required
-                />}
+                />
 
                 <textarea
                     name="description"

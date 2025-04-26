@@ -1,5 +1,5 @@
 .form-container{
-	padding-top: 60px;
+	padding-top: 20px;
     position: fixed;
     top: 0;
     left: 0;
@@ -14,22 +14,23 @@
     overflow-y: auto;
 }
 
-#order-form{
+.form{
     position: relative;
-    margin: 40px auto;
+    margin: 40x auto;
     width: 600px;
+	min-height: 700px;
     padding: 30px 110px;
     background: rgb(183, 207, 226);
     border-radius: 20px;
     box-shadow: 5px 20px 50px #000;
 }
 
-#order-form h1 {
+.form h1 {
     width: 100%;
     border-bottom: 2px solid;
 }
 
-#order-form input{
+.form input{
 	width: 70%;
 	height: 30px;
 	background: #e0dede;
@@ -41,7 +42,16 @@
 	border-radius: 5px;
 }
 
-#order-form select{
+.form label{
+	width: 70%;
+	justify-content: left;
+	display: flex;
+	margin: 25px 65px;
+	padding: 12px;
+	border: none;
+}
+
+.form select{
 	width: 74%;
 	margin: 25px auto;
 	display: flex;
@@ -69,14 +79,15 @@
 	cursor: pointer;
 }
 
-textarea {
+.form textarea {
 	width: 100%;
-	padding: 12px;
-	border-radius: 5px;
-	border: 1px solid #ccc;
-	resize: vertical; 
-	font-size: 16px;
-	box-sizing: border-box;
+    min-height: 150px;
+    padding: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
   }
 
 .closeForm-button{

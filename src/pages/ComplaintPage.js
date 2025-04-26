@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { getComplaintFeedbacks, createComplaintFeedback, updateComplaintFeedback, deleteComplaintFeedback } from "../../api/complaint_feedbackApi";
-import NavBar from "../../components/NavBar/NavBar";
-import Card from "../../components/Card/Card";
-import "./ComplaintPage.css";
+import { getComplaintFeedbacks, createComplaintFeedback, updateComplaintFeedback, deleteComplaintFeedback } from "../api/complaint_feedbackApi";
+import NavBar from "../components/NavBar/NavBar";
+import Card from "../components/Card/Card";
+import "./Page.css";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import ComplaintForm from "../../components/ComplaintForm/ComplaintForm";
-import FilterForm from "../../components/FilterForm/FilterForm";
+import ComplaintForm from "../components/Form/ComplaintForm";
+import FilterForm from "../components/FilterForm/FilterForm";
+import { useAuth } from "../contexts/AuthContext";
 
 function ComplaintPage() {
     const [addComplaintFormOpened, setAddComplaintFormOpened] = useState(false);
     const [updateComplaintFormOpened, setUpdateComplaintFormOpened] = useState(false);
     const [initialData, setInitialData] = useState({});
     const [complaints, setComplaints] = useState([]);
+    const {role} = useAuth()
     const email = localStorage.getItem("user");
     const filterFields = [
         {name: "types", type: "text", placeholder: "Types", },
@@ -93,9 +95,9 @@ function ComplaintPage() {
         <div>
             <NavBar />
 
-            <FilterForm onFilter={filterComplaints} fields={filterFields}/>
+            {role ==="manager" && <FilterForm onFilter={filterComplaints} fields={filterFields}/>}
 
-            <div id="complaint-section">
+            <div className="data-section">
                 {complaints.map((complaint) => {
                     return (
                     <Card
@@ -107,7 +109,7 @@ function ComplaintPage() {
                     />
                 )})}
             </div>
-            <button id="addIcon" onClick={openAddComplaintForm}>
+            <button className="addIcon" onClick={openAddComplaintForm}>
                 <AddCircleOutlineIcon />
             </button>
             {addComplaintFormOpened && <ComplaintForm initialData={""} onSubmit={handleAddComplaint} closeForm={closeAddComplaintForm} />}

@@ -1,11 +1,22 @@
 import React, { useState, useEffect } from "react";
-import "./IssueForm.css";
+import "./Form.css";
+import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 
-export default function IssueForm({ initialData = {}, onSubmit, closeForm, role }) {
+const categories = [
+
+    "Điện",
+    "Nước",
+    "Điều hòa / Quạt thông gió",
+    "Internet / Hệ thống mạng",
+    "Cửa / Cửa sổ / Khóa / Cửa cuốn",
+    "Trần / Tường / Sàn",
+
+]
+
+export default function IssueForm({ initialData = {}, onSubmit, closeForm}) {
     const [formData, setFormData] = useState({
         name: "",
         category: "",
-        numbers: "",
         description: "",
         customer_name: "" || initialData?.customer?.name,
     });
@@ -41,20 +52,35 @@ export default function IssueForm({ initialData = {}, onSubmit, closeForm, role 
 
     return (
         <div className="form-container">
-            <form onSubmit={handleSubmit} id="issue-form">
-                <input
-                    type="text"
+            <form onSubmit={handleSubmit} className="form">
+            {initialData.id ? <h1>Edit Issue</h1> : <h1>Add Issue</h1>}
+                <select
                     name="name"
                     value={formData.name || ""}
-                    placeholder="Issue Name"
                     onChange={handleChange}
                     required
-                />
-                <input
-                    type="text"
+                >
+                    <option value="" disabled hidden>-- Chọn loại dịch vụ --</option>
+                    <option value="Sửa chữa">Sửa chữa</option>
+                    <option value="Lắp đặt">Lắp đặt</option>
+                </select>
+                <select
                     name="category"
                     value={formData.category || ""}
-                    placeholder="Category"
+                    onChange={handleChange}
+                    required
+                >
+                    
+                    <option value="" disabled hidden>-- Chọn hạng mục --</option>
+                    {categories.map((category, index) => (
+                        <option key={index} value={category}>{category}</option>
+                    ))}
+                </select>
+                <input
+                    type="text"
+                    name="customer_name"
+                    value={formData.customer_name || ""}
+                    placeholder="Customer Name"
                     onChange={handleChange}
                     required
                 />
@@ -65,16 +91,8 @@ export default function IssueForm({ initialData = {}, onSubmit, closeForm, role 
                     onChange={handleChange}
                     required
                 />
-                {role ==="manager" && <input
-                    type="text"
-                    name="customer_name"
-                    value={formData.customer_name || ""}
-                    placeholder="Customer Name"
-                    onChange={handleChange}
-                    required
-                />}
-                <button type="submit">{initialData.id ? "Update" : "Add"} Issue</button>
-                <button type="button" onClick={closeForm}>Close</button>
+                <button type="submit" className="add-button">{initialData.id ? "Update" : "Add"} Issue</button>
+                <button type="button" className="closeForm-button" onClick={closeForm}><ArrowBackOutlinedIcon /></button>
             </form>
         </div>
     );

@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { getOrders, createOrder, updateOrder, deleteOrder } from "../../api/orderApi";
-import { getCustomers } from "../../api/customerApi";
-import NavBar from "../../components/NavBar/NavBar";
-import "./OrderPage.css";
+import { getOrders, createOrder, updateOrder, deleteOrder } from "../api/orderApi";
+import { getCustomers } from "../api/customerApi";
+import NavBar from "../components/NavBar/NavBar";
+import "./Page.css";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import OrderForm from "../../components/OrderForm/OrderForm";
-import { useAuth } from "../../contexts/AuthContext";
-import FilterForm from "../../components/FilterForm/FilterForm";
-import GeneralCard from "../../components/GeneralCard/GeneralCard";
-import DetailCard from "../../components/DetailCard/DetailCard";
+import OrderForm from "../components/Form/OrderForm";
+import { useAuth } from "../contexts/AuthContext";
+import FilterForm from "../components/FilterForm/FilterForm";
+import GeneralCard from "../components/GeneralCard/GeneralCard";
+import DetailCard from "../components/DetailCard/DetailCard";
 
 function OrderPage() {
     const [addOrderFormOpened, setAddOrderFormOpened] = useState(false);
@@ -99,7 +99,6 @@ function OrderPage() {
 
     const handleUpdateOrder = async (orderData) => {
         try {
-            console.log("📤 Updating order:", orderData);
             await updateOrder(orderData);
             closeUpdateOrderForm();
             const res = await getOrders();
@@ -139,8 +138,8 @@ function OrderPage() {
         <div>
             <NavBar />
 
-            <FilterForm onFilter={filterOrder} fields={filterFields} />
-            <div id="order-section">
+            {role ==="manager" && <FilterForm onFilter={filterOrder} fields={filterFields} />}
+            <div className="data-section">
                 {orders.map((order) => {
                     const customer = customers.find((customer) => customer.id === order.customer_id);
                     return (
@@ -153,7 +152,7 @@ function OrderPage() {
                     )
                 })}
             </div>
-            <button id="addIcon" onClick={openAddOrderForm}>
+            <button className="addIcon" onClick={openAddOrderForm}>
                 <AddCircleOutlineIcon />
             </button>
             {openDetail &&
@@ -165,7 +164,7 @@ function OrderPage() {
                     closeForm={closeDetailCard}
                     role={role}
                 />}
-            {addOrderFormOpened && <OrderForm initialData={""} onSubmit={handleAddOrder} closeForm={closeAddOrderForm} role={role} />}
+            {addOrderFormOpened && <OrderForm onSubmit={handleAddOrder} closeForm={closeAddOrderForm} role={role} />}
             {updateOrderFormOpened && <OrderForm initialData={initialData} onSubmit={handleUpdateOrder} closeForm={closeUpdateOrderForm} role={role} />}
         </div>
     );

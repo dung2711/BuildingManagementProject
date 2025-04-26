@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import "./PropertyForm.css";
+import "./Form.css";
+import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
+
 
 export default function PropertyForm({ initialData = {}, onSubmit, closeForm }) {
     const [formData, setFormData] = useState({
@@ -37,7 +39,8 @@ export default function PropertyForm({ initialData = {}, onSubmit, closeForm }) 
 
     return (
         <div className="form-container">
-            <form onSubmit={handleSubmit} id="property-form">
+            <form onSubmit={handleSubmit} className="form">
+                {initialData.id ? <h1>Edit Property</h1> : <h1>Add Property</h1>}
                 <input
                     type="text"
                     name="name"
@@ -54,13 +57,6 @@ export default function PropertyForm({ initialData = {}, onSubmit, closeForm }) 
                     onChange={handleChange}
                     required
                 />
-                <textarea
-                    name="description"
-                    value={formData.description || ""}
-                    placeholder="Description"
-                    onChange={handleChange}
-                    required
-                />
                 <input
                     type="number"
                     name="numbers"
@@ -68,8 +64,15 @@ export default function PropertyForm({ initialData = {}, onSubmit, closeForm }) 
                     placeholder="Numbers"
                     onChange={handleChange}
                 />
-                <button type="submit">{initialData.id ? "Update" : "Add"} Property</button>
-                <button type="button" onClick={closeForm}>Close</button>
+                <textarea
+                    name="description"
+                    value={formData.description || ""}
+                    placeholder="Description"
+                    onChange={handleChange}
+                    required
+                />
+                <button type="submit" className="add-button">{initialData.id ? "Update" : "Add"} Property</button>
+                <button type="button" className="closeForm-button" onClick={closeForm}><ArrowBackOutlinedIcon /></button>
             </form>
         </div>
     );
