@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { getComplaintFeedbacks, createComplaintFeedback, updateComplaintFeedback, deleteComplaintFeedback } from "../api/complaint_feedbackApi";
 import NavBar from "../components/NavBar/NavBar";
 import Card from "../components/Card/Card";
@@ -7,14 +7,21 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import ComplaintForm from "../components/Form/ComplaintForm";
 import FilterForm from "../components/FilterForm/FilterForm";
 import { useAuth } from "../contexts/AuthContext";
+import FlashMessage from "../components/FlashMessage";
 
 function ComplaintPage() {
     const [addComplaintFormOpened, setAddComplaintFormOpened] = useState(false);
     const [updateComplaintFormOpened, setUpdateComplaintFormOpened] = useState(false);
     const [initialData, setInitialData] = useState({});
     const [complaints, setComplaints] = useState([]);
+    const [flashMessage, setFlashMessage] = useState(false);
+    const [message, setMessage] = useState("");
+    const [severity, setSeverity] = useState("");
+
     const {role} = useAuth()
+    const timeOutRef = useRef(null);
     const email = localStorage.getItem("user");
+
     const filterFields = [
         {name: "types", type: "text", placeholder: "Types", },
         {name: "category", type: "text", placeholder: "Category", },
@@ -56,8 +63,10 @@ function ComplaintPage() {
             closeAddComplaintForm();
             const res = await getComplaintFeedbacks();
             setComplaints(res.data);
+            renderFlashMessage("Complaint added successfully", "success");
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
+            renderFlashMessage("Failed to add complaint", "error");
         }
     };
 
@@ -68,8 +77,10 @@ function ComplaintPage() {
             closeUpdateComplaintForm();
             const res = await getComplaintFeedbacks();
             setComplaints(res.data);
+            renderFlashMessage("Complaint updated successfully", "success");
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
+            renderFlashMessage("Failed to update complaint", "error");
         }
     };
 
@@ -79,8 +90,10 @@ function ComplaintPage() {
             await deleteComplaintFeedback(complaintId);
             const res = await getComplaintFeedbacks();
             setComplaints(res.data);
+            renderFlashMessage("Complaint deleted successfully", "success");
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
+            renderFlashMessage("Failed to delete complaint", "error");
         }
     };
     const filterComplaints = async (filter) => {
@@ -91,6 +104,24 @@ function ComplaintPage() {
             console.error("Failed to fetch complaints", error);
         }
     }
+
+    const handleFlashMessageClose = () => {
+        console.log("Flash message closed");
+        setFlashMessage(false);
+    };
+    const renderFlashMessage = (msg, severity) => {
+        console.log("Render flash message:");
+        setMessage(msg);
+        setSeverity(severity);
+        setFlashMessage(true);
+        if (timeOutRef.current) {
+            clearTimeout(timeOutRef.current);
+        }
+        timeOutRef.current = setTimeout(() => {
+            setFlashMessage(false);
+        }, 3000);
+    }
+
     return (
         <div>
             <NavBar />
@@ -114,6 +145,7 @@ function ComplaintPage() {
             </button>
             {addComplaintFormOpened && <ComplaintForm initialData={""} onSubmit={handleAddComplaint} closeForm={closeAddComplaintForm} />}
             {updateComplaintFormOpened && <ComplaintForm initialData={initialData} onSubmit={handleUpdateComplaint} closeForm={closeUpdateComplaintForm} />}
+            {flashMessage && <FlashMessage message={message} severity={severity} closeMessage={handleFlashMessageClose} />} 
         </div>
     );
 }

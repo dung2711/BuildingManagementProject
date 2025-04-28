@@ -6,7 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { updateIssue } from "../../api/issueApi";
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 
-export default function DetailCard({ data, type, openForm, closeForm, deleteItem, role }) {
+export default function DetailCard({ data, type, openForm, closeForm, deleteItem, role, renderFlashMessage }) {
     const [status, setStatus] = useState("");
     useEffect(() => {
         if (data.status) {
@@ -54,9 +54,20 @@ export default function DetailCard({ data, type, openForm, closeForm, deleteItem
                 />}
                 <div className="detailCard-actions">
                     <div className="left-action">
-                        {role === "manager" && data.status !== "Đã hủy" && <button id="accept-button" onClick={() => changeOrderStatus("Chấp nhận")}>Accept</button>}
-                        {role === "manager" && data.status !== "Đã hủy" && <button id="deny-button" onClick={() => changeOrderStatus("Từ chối")}>Deny</button>}
-                        {role === "customer" && <button id="cancel-button" onClick={() => changeOrderStatus("Đã hủy")}>Cancel</button>}
+                        {role === "manager" && data.status !== "Đã hủy" && <button id="accept-button" onClick={() => {
+                            changeOrderStatus("Chấp nhận")
+                            renderFlashMessage("Chấp nhận thành công", "success")
+                        }
+                        }>Accept</button>}
+                        {role === "manager" && data.status !== "Đã hủy" && <button id="deny-button" onClick={() => {
+                            changeOrderStatus("Từ chối")
+                            renderFlashMessage("Từ chối thành công", "success")
+                        }}
+                        >Deny</button>}
+                        {role === "customer" && <button id="cancel-button" onClick={() => {
+                            changeOrderStatus("Đã hủy");
+                            renderFlashMessage("Hủy thành công", "success")
+                        }}>Cancel</button>}
                     </div>
                     <div className="right-action">
                         <button className="edit-button" onClick={() => openForm(data)}><EditSquareIcon /></button>
@@ -72,10 +83,10 @@ export default function DetailCard({ data, type, openForm, closeForm, deleteItem
                 <h2>#{data.id}</h2>
                 <h2 >Thông Tin: </h2>
                 <div className="info-section">
-                <p><strong>Name: </strong> {data.name}</p>
-                <p><strong>Category: </strong> {data.category}</p>
-                {data.customer.name && <p><strong>Customer Name: </strong> {data.customer.name}</p>}
-                <p><strong>Status: </strong> {status}</p>
+                    <p><strong>Name: </strong> {data.name}</p>
+                    <p><strong>Category: </strong> {data.category}</p>
+                    {data.customer.name && <p><strong>Customer Name: </strong> {data.customer.name}</p>}
+                    <p><strong>Status: </strong> {status}</p>
                 </div>
                 <h2>Mô tả: </h2>
                 {data.description && <textarea
@@ -84,10 +95,19 @@ export default function DetailCard({ data, type, openForm, closeForm, deleteItem
                     className="readonly-textarea"
                 />}
                 <div className="detailCard-actions">
-                <div className="left-action">
-                        {role === "manager" && data.status !== "Đã hủy" && <button id="accept-button" onClick={() => changeIssueStatus("Chấp nhận")}>Accept</button>}
-                        {role === "manager" && data.status !== "Đã hủy" && <button id="deny-button" onClick={() => changeIssueStatus("Từ chối")}>Deny</button>}
-                        {role === "customer" && <button id="cancel-button" onClick={() => changeIssueStatus("Đã hủy")}>Cancel</button>}
+                    <div className="left-action">
+                        {role === "manager" && data.status !== "Đã hủy" && <button id="accept-button" onClick={() => {
+                            changeIssueStatus("Chấp nhận");
+                            renderFlashMessage("Chấp nhận thành công", "success")
+                        }}>Accept</button>}
+                        {role === "manager" && data.status !== "Đã hủy" && <button id="deny-button" onClick={() => {
+                            changeIssueStatus("Từ chối");
+                            renderFlashMessage("Từ chối thành công", "success")
+                        }}>Deny</button>}
+                        {role === "customer" && <button id="cancel-button" onClick={() => {
+                            changeIssueStatus("Đã hủy");
+                            renderFlashMessage("Hủy thành công", "success")
+                        }}>Cancel</button>}
                     </div>
                     <div className="right-action">
                         <button className="edit-button" onClick={() => openForm(data)}><EditSquareIcon /></button>

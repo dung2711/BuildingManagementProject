@@ -10,7 +10,7 @@ const categories = [
     "Vận chuyển giữa các tầng",
 ];
 
-export default function OrderForm({ initialData = {}, onSubmit, closeForm, role }) {
+export default function OrderForm({ initialData = {}, onSubmit, closeForm }) {
     const [formData, setFormData] = useState({
         order_date: "",
         category: "",

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { getUser, register, updateUser, deleteUser } from "../api/userApi";
 import NavBar from "../components/NavBar/NavBar";
 import Card from "../components/Card/Card";
@@ -7,6 +7,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import UserForm from "../components/Form/UserForm";
 import { getCustomers } from "../api/customerApi";
 import FilterForm from "../components/FilterForm/FilterForm";
+import FlashMessage from "../components/FlashMessage";
 
 function UserPage() {
     const [addUserFormOpened, setAddUserFormOpened] = useState(false);
@@ -14,13 +15,21 @@ function UserPage() {
     const [initialData, setInitialData] = useState({});
     const [users, setUsers] = useState([]);
     const [customers, setCustomers] = useState([]);
+    const [flashMessage, setFlashMessage] = useState(false);
+    const [message, setMessage] = useState("");
+    const [severity, setSeverity] = useState("");
+
+    const timeOutRef = useRef(null);
+
     const filterFields = [
         { name: "name", type: "text", placeholder: "Name" },
-        { name: "authentication", type: "select", placeholder: "Role:", options: [
-            { value: "admin", label: "Admin" },
-            { value: "manager", label: "Manager" },
-            { value: "customer", label: "Customer" }
-        ]},
+        {
+            name: "authentication", type: "select", placeholder: "Role:", options: [
+                { value: "admin", label: "Admin" },
+                { value: "manager", label: "Manager" },
+                { value: "customer", label: "Customer" }
+            ]
+        },
         { name: "identification", type: "text", placeholder: "Identification" },
         { name: "customer_name", type: "text", placeholder: "Customer Name" }
     ];
@@ -52,13 +61,15 @@ function UserPage() {
     }
     const handleAddUser = async (userData) => {
         try {
-            console.log("📤 Adding user:", userData);   
+            console.log("📤 Adding user:", userData);
             await register(userData);
             closeAddUserForm();
             const res = await getUser();
             setUsers(res.data);
+            renderFlashMessage("User added successfully", "success");
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
+            renderFlashMessage("Failed to add user", "error");
         }
     };
 
@@ -68,8 +79,10 @@ function UserPage() {
             closeUpdateUserForm();
             const res = await getUser();
             setUsers(res.data);
+            renderFlashMessage("User updated successfully", "success");
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
+            renderFlashMessage("Failed to update user", "error");
         }
     }
     const deleteOneUser = async (email) => {
@@ -77,30 +90,49 @@ function UserPage() {
             await deleteUser(email);
             const res = await getUser();
             setUsers(res.data);
+            renderFlashMessage("User deleted successfully", "success");
         } catch (error) {
-            
+            console.log("❌ Error response:", error.response?.data);
+            renderFlashMessage("Failed to delete user", "error");
         }
     }
 
     const userFilter = async (filters) => {
-            try {
-                console.log("Filters", filters)
-                const res = await getUser(filters);
-                setUsers(res.data);
-            } catch (error) {
-                console.error("Failed to filter user", error);
-            }
+        try {
+            console.log("Filters", filters)
+            const res = await getUser(filters);
+            setUsers(res.data);
+        } catch (error) {
+            console.error("Failed to filter user", error);
         }
+    }
+
+    const handleFlashMessageClose = () => {
+        console.log("Flash message closed");
+        setFlashMessage(false);
+    };
+    const renderFlashMessage = (msg, severity) => {
+        console.log("Render flash message:");
+        setMessage(msg);
+        setSeverity(severity);
+        setFlashMessage(true);
+        if (timeOutRef.current) {
+            clearTimeout(timeOutRef.current);
+        }
+        timeOutRef.current = setTimeout(() => {
+            setFlashMessage(false);
+        }, 3000);
+    }
     return (
         <div>
             <NavBar />
 
-            <FilterForm onFilter={userFilter} fields={filterFields}/>
+            <FilterForm onFilter={userFilter} fields={filterFields} />
 
             <div className="data-section">
                 {users.map((user) => {
                     const customer = customers.find(customer => customer.id === user.customer_id);
-                    return <Card data={{...user, customer}} key={user.email} type="user"
+                    return <Card data={{ ...user, customer }} key={user.email} type="user"
                         openForm={openUpdateUserForm} deleteItem={deleteOneUser} />
                 })}
             </div>
@@ -109,6 +141,7 @@ function UserPage() {
             </button>
             {addUserFormOpened && <UserForm initialData={""} onSubmit={handleAddUser} closeForm={closeAddUserForm} />}
             {updateUserFormOpened && <UserForm initialData={initialData} onSubmit={handleUpdateUser} closeForm={closeUpdateUserForm} />}
+            {flashMessage && <FlashMessage message={message} severity={severity} closeMessage={handleFlashMessageClose} />} 
         </div>
 
     )

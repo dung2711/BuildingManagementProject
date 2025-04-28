@@ -19,7 +19,6 @@ export function AuthProvider({children}){
         localStorage.setItem("role", userRole);
     }
     const logout = () => {
-        console.log("Logout function called");
         setToken("");
         setRole("");
         localStorage.removeItem("token");

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { getIssues, createIssue, updateIssue, deleteIssue } from "../api/issueApi";
 import { getCustomers } from "../api/customerApi";
 import NavBar from "../components/NavBar/NavBar";
@@ -9,6 +9,7 @@ import { useAuth } from "../contexts/AuthContext";
 import FilterForm from "../components/FilterForm/FilterForm";
 import GeneralCard from "../components/GeneralCard/GeneralCard";
 import DetailCard from "../components/DetailCard/DetailCard";
+import FlashMessage from "../components/FlashMessage";
 
 function IssuePage() {
     const [addIssueFormOpened, setAddIssueFormOpened] = useState(false);
@@ -18,7 +19,13 @@ function IssuePage() {
     const [customers, setCustomers] = useState([]);
     const [openDetail, setOpenDetail] = useState(false);
     const [currentIssue, setCurrentIssue] = useState({});
+    const [flashMessage, setFlashMessage] = useState(false);
+    const [message, setMessage] = useState("");
+    const [severity, setSeverity] = useState("");
+
     const {role} = useAuth();
+    const timeOutRef = useRef(null);
+
     const filterFields = 
     [   {name: "status", type: "select", placeholder: "Status", options: [
         { value: "Đang xử lý", label: "Đang xử lý" },
@@ -80,8 +87,10 @@ function IssuePage() {
             closeAddIssueForm();
             const res = await getIssues();
             setIssues(res.data);
+            renderFlashMessage("Issue added successfully", "success");
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
+            renderFlashMessage("Failed to add issue", "error");
         }
     };
 
@@ -96,9 +105,11 @@ function IssuePage() {
                 const updateIssue = res.data.find(i => i.id === issueData.id);
                 const customer = customers.find(c => c.id === updateIssue.customer_id);
                 setCurrentIssue({ ...updateIssue, customer });
+                renderFlashMessage("Issue updated successfully", "success");
             }
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
+            renderFlashMessage("Failed to update issue", "error");
         }
     };
 
@@ -110,8 +121,10 @@ function IssuePage() {
             setCurrentIssue({});
             const res = await getIssues();
             setIssues(res.data);
+            renderFlashMessage("Issue deleted successfully", "success");
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
+            renderFlashMessage("Failed to delete issue", "error");
         }
     };
     const filterIssues = async (filter) => {
@@ -121,6 +134,23 @@ function IssuePage() {
         } catch (error) {
             console.error("Failed to fetch issues", error);
         }
+    }
+
+    const handleFlashMessageClose = () => {
+        console.log("Flash message closed");
+        setFlashMessage(false);
+    };
+    const renderFlashMessage = (msg, severity) => {
+        console.log("Render flash message:");
+        setMessage(msg);
+        setSeverity(severity);
+        setFlashMessage(true);
+        if (timeOutRef.current) {
+            clearTimeout(timeOutRef.current);
+        }
+        timeOutRef.current = setTimeout(() => {
+            setFlashMessage(false);
+        }, 3000);
     }
     return (
         <div>
@@ -146,6 +176,7 @@ function IssuePage() {
             {openDetail && <DetailCard data={currentIssue} type="issue" closeForm={closeDetailCard} openForm={openUpdateIssueForm} deleteItem={deleteOneIssue} role={role}/>}
             {addIssueFormOpened && <IssueForm onSubmit={handleAddIssue} closeForm={closeAddIssueForm} role={role} />}
             {updateIssueFormOpened && <IssueForm initialData={initialData} onSubmit={handleUpdateIssue} closeForm={closeUpdateIssueForm} role={role} />}
+            {flashMessage && <FlashMessage message={message} severity={severity} closeMessage={handleFlashMessageClose} />}
         </div>
     );
 }

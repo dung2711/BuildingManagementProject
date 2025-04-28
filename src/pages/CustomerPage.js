@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { getCustomers, createCustomer, updateCustomer, deleteCustomer } from "../api/customerApi";
 import NavBar from "../components/NavBar/NavBar";
 import Card from "../components/Card/Card";
@@ -6,12 +6,19 @@ import "./Page.css";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CustomerForm from "../components/Form/CustomerForm";
 import FilterForm from "../components/FilterForm/FilterForm";
+import FlashMessage from "../components/FlashMessage";
 
 function CustomerPage() {
     const [addCustomerFormOpened, setAddCustomerFormOpened] = useState(false);
     const [updateCustomerFormOpened, setUpdateCustomerFormOpened] = useState(false);
     const [initialData, setInitialData] = useState({});
     const [customers, setCustomers] = useState([]);
+    const [flashMessage, setFlashMessage] = useState(false);
+    const [message, setMessage] = useState("");
+    const [severity, setSeverity] = useState("");
+
+    const timeOutRef = useRef(null);
+
     const filterFields = [
         { name: "name", type: "text", placeholder: "Company Name" },
         { name: "director_name", type: "text", placeholder: "Director Name" },
@@ -55,8 +62,10 @@ function CustomerPage() {
             closeAddCustomerForm();
             const res = await getCustomers();
             setCustomers(res.data);
+            renderFlashMessage("Customer added successfully", "success");
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
+            renderFlashMessage("Failed to add customer", "error");
         }
     };
 
@@ -66,8 +75,10 @@ function CustomerPage() {
             closeUpdateCustomerForm();
             const res = await getCustomers();
             setCustomers(res.data);
+            renderFlashMessage("Customer updated successfully", "success");
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
+            renderFlashMessage("Failed to update customer", "error");
         }
     };
 
@@ -76,8 +87,10 @@ function CustomerPage() {
             await deleteCustomer(email);
             const res = await getCustomers();
             setCustomers(res.data);
+            renderFlashMessage("Customer deleted successfully", "success");
         } catch (error) {
             console.error("Failed to delete customer", error);
+            renderFlashMessage("Failed to delete customer", "error");
         }
     };
 
@@ -89,6 +102,23 @@ function CustomerPage() {
         } catch (error) {
             console.error("Failed to filter customers", error);
         }
+    }
+
+    const handleFlashMessageClose = () => {
+        console.log("Flash message closed");
+        setFlashMessage(false);
+    };
+    const renderFlashMessage = (msg, severity) => {
+        console.log("Render flash message:");
+        setMessage(msg);
+        setSeverity(severity);
+        setFlashMessage(true);
+        if (timeOutRef.current) {
+            clearTimeout(timeOutRef.current);
+        }
+        timeOutRef.current = setTimeout(() => {
+            setFlashMessage(false);
+        }, 3000);
     }
     return (
         <div>
@@ -107,6 +137,7 @@ function CustomerPage() {
             </button>
             {addCustomerFormOpened && <CustomerForm initialData={""} onSubmit={handleAddCustomer} closeForm={closeAddCustomerForm} />}
             {updateCustomerFormOpened && <CustomerForm initialData={initialData} onSubmit={handleUpdateCustomer} closeForm={closeUpdateCustomerForm} />}
+            {flashMessage && <FlashMessage message={message} severity={severity} closeMessage={handleFlashMessageClose} />}
         </div>
     );
 }

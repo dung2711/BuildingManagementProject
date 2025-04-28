@@ -23,7 +23,7 @@
     color: rgb(199, 222, 233)
 }
 
-#loginPage input{
+#loginForm input{
 	width: 60%;
 	height: 10px;
 	background: #e0dede;
@@ -35,7 +35,7 @@
 	border-radius: 5px;
 }
 
-#loginPage button{
+#loginForm button{
 	width: 60%;
 	height: 40px;
 	margin: 10px auto;
@@ -52,6 +52,6 @@
 	transition: .2s ease-in;
 	cursor: pointer;
 }
-#loginPage button:hover{
+#loginForm button:hover{
 	background: #186484;
 }

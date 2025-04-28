@@ -41,10 +41,10 @@ export default function UserForm({ initialData = {}, onSubmit, closeForm }) {
         if(dataToSubmit.contact_number === "") {
             delete dataToSubmit.contact_number;
         }
-        if(dataToSubmit.director_name === "") {
+        if(dataToSubmit.director_name === "" || (!dataToSubmit.director_name)) {
             delete dataToSubmit.director_name;
         }
-        if(dataToSubmit.director_phone_number === "") {
+        if(dataToSubmit.director_phone_number === "" || (!dataToSubmit.director_phone_number)) {
             delete dataToSubmit.director_phone_number;
         }
         

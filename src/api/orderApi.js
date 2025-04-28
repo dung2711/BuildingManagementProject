@@ -19,10 +19,6 @@ export const createOrder = async ({
     order_date, category, observator, observator_phone_number
     , floor, lift_required, description, customer_name
 }) => {
-    console.log("📤 Creating order:", {
-        order_date, category, observator, observator_phone_number
-        , floor, lift_required, description, customer_name
-    });
     return axiosClient.post(`/order`, {
         order_date, category, observator, observator_phone_number
         , floor, lift_required, description, customer_name
@@ -33,10 +29,6 @@ export const updateOrder = async ({id,
     order_date, category, observator, observator_phone_number
     , floor, lift_required, status, description, customer_name
 }) => {
-    console.log("📤 Updating order:", {
-        id, order_date, category, observator, observator_phone_number
-        , floor, lift_required, status, description, customer_name
-    });
     return axiosClient.patch(`/order/${id}`, {
         order_date, category, observator, observator_phone_number
         , floor, lift_required, status, description, customer_name

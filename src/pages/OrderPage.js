@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { getOrders, createOrder, updateOrder, deleteOrder } from "../api/orderApi";
 import { getCustomers } from "../api/customerApi";
 import NavBar from "../components/NavBar/NavBar";
@@ -9,6 +9,7 @@ import { useAuth } from "../contexts/AuthContext";
 import FilterForm from "../components/FilterForm/FilterForm";
 import GeneralCard from "../components/GeneralCard/GeneralCard";
 import DetailCard from "../components/DetailCard/DetailCard";
+import FlashMessage from "../components/FlashMessage";
 
 function OrderPage() {
     const [addOrderFormOpened, setAddOrderFormOpened] = useState(false);
@@ -18,7 +19,14 @@ function OrderPage() {
     const [customers, setCustomers] = useState([]);
     const [currentOrder, setCurrentOrder] = useState({});
     const [openDetail, setOpenDetail] = useState(false);
+
+    const [message, setMessage] = useState("");
+    const [severity, setSeverity] = useState("");
+    const [flashMessage, setFlashMessage] = useState(false);
+
     const { role } = useAuth();
+    const timeOutRef = useRef(null);
+
     const filterFields = [
         {
             name: "status", type: "select", placeholder: "Status", options: [
@@ -61,16 +69,17 @@ function OrderPage() {
 
     const closeAddOrderForm = () => {
         setAddOrderFormOpened(false);
+        setFlashMessage(false);
     };
 
     const openUpdateOrderForm = (orderData) => {
-        console.log("📤 Opening update order form with data:", orderData);
         setUpdateOrderFormOpened(true);
         setInitialData(orderData);
     };
 
     const closeUpdateOrderForm = () => {
         setUpdateOrderFormOpened(false);
+        setFlashMessage(false);
     };
 
     const openDetailCard = (orderData) => {
@@ -87,13 +96,14 @@ function OrderPage() {
 
     const handleAddOrder = async (orderData) => {
         try {
-            console.log("📤 Adding order:", orderData);
             await createOrder(orderData);
             closeAddOrderForm();
             const res = await getOrders();
             setOrders(res.data);
+            renderFlashMessage("Add order successfully", "success");
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
+            renderFlashMessage("Add order failed", "error");
         }
     };
 
@@ -108,21 +118,24 @@ function OrderPage() {
                 const customer = customers.find(c => c.id === updatedOrder.customer_id);
                 setCurrentOrder({ ...updatedOrder, customer });
             }
+            renderFlashMessage("Update order successfully", "success");
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
+            renderFlashMessage("Update order failed", "error");
         }
     };
 
     const deleteOneOrder = async (orderId) => {
         try {
-            console.log("📤 Deleting order:", orderId);
             await deleteOrder(orderId);
             setOpenDetail(false);
             setCurrentOrder({});
             const res = await getOrders();
             setOrders(res.data);
+            renderFlashMessage("Delete order successfully", "success");
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
+            renderFlashMessage("Delete order failed", "error");
         }
     };
 
@@ -134,11 +147,28 @@ function OrderPage() {
             console.error("Failed to filter orders", error);
         }
     }
+
+    const handleFlashMessageClose = () => {
+        console.log("Flash message closed");
+        setFlashMessage(false);
+    };
+    const renderFlashMessage = (msg, severity) => {
+        console.log("Render flash message:");
+        setMessage(msg);
+        setSeverity(severity);
+        setFlashMessage(true);
+        if (timeOutRef.current) {
+            clearTimeout(timeOutRef.current);
+        }
+        timeOutRef.current = setTimeout(() => {
+            setFlashMessage(false);
+        }, 3000);
+    }
     return (
         <div>
             <NavBar />
 
-            {role ==="manager" && <FilterForm onFilter={filterOrder} fields={filterFields} />}
+            {role === "manager" && <FilterForm onFilter={filterOrder} fields={filterFields} />}
             <div className="data-section">
                 {orders.map((order) => {
                     const customer = customers.find((customer) => customer.id === order.customer_id);
@@ -163,9 +193,11 @@ function OrderPage() {
                     deleteItem={deleteOneOrder}
                     closeForm={closeDetailCard}
                     role={role}
+                    renderFlashMessage={renderFlashMessage}
                 />}
             {addOrderFormOpened && <OrderForm onSubmit={handleAddOrder} closeForm={closeAddOrderForm} role={role} />}
             {updateOrderFormOpened && <OrderForm initialData={initialData} onSubmit={handleUpdateOrder} closeForm={closeUpdateOrderForm} role={role} />}
+            {flashMessage && <FlashMessage message={message} severity={severity} closeMessage={handleFlashMessageClose} />}
         </div>
     );
 }
