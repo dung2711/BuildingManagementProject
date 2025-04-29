@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "./Form.css";
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
+import * as XLSX from "xlsx"
 
 
-export default function PropertyForm({ initialData = {}, onSubmit, closeForm }) {
+export default function PropertyForm({ initialData = {}, onSubmit, closeForm, fileSubmit }) {
+    const [fileData, setFileData] = useState([]);
     const [formData, setFormData] = useState({
         name: "",
         category: "",
@@ -30,12 +32,26 @@ export default function PropertyForm({ initialData = {}, onSubmit, closeForm }) 
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        if(fileData.length > 0){
+            fileSubmit(fileData)
+        } else {
         const dataToSubmit = { ...formData };
         if (dataToSubmit.numbers === "" || dataToSubmit.numbers === null) {
             delete dataToSubmit.numbers;
         }
         onSubmit(dataToSubmit);
     };
+}
+
+    const handleFileChange = async(e) => {
+        const file = e.target.files[0];
+                const data = await file.arrayBuffer();
+                const workbook = XLSX.read(data);
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                setFileData(jsonData);
+    }
 
     return (
         <div className="form-container">
@@ -47,7 +63,7 @@ export default function PropertyForm({ initialData = {}, onSubmit, closeForm }) 
                     value={formData.name || ""}
                     placeholder="Name"
                     onChange={handleChange}
-                    required
+                    required={fileData ? 0 : 1}
                 />
                 <input
                     type="text"
@@ -55,7 +71,7 @@ export default function PropertyForm({ initialData = {}, onSubmit, closeForm }) 
                     value={formData.category || ""}
                     placeholder="Category"
                     onChange={handleChange}
-                    required
+                    required={fileData ? 0 : 1}
                 />
                 <input
                     type="number"
@@ -69,8 +85,9 @@ export default function PropertyForm({ initialData = {}, onSubmit, closeForm }) 
                     value={formData.description || ""}
                     placeholder="Description"
                     onChange={handleChange}
-                    required
+                    required={fileData ? 0 : 1}
                 />
+                <input type="file" accept=".xlsx" onChange={handleFileChange} />
                 <button type="submit" className="add-button">{initialData.id ? "Update" : "Add"} Property</button>
                 <button type="button" className="closeForm-button" onClick={closeForm}><ArrowBackOutlinedIcon /></button>
             </form>

@@ -82,6 +82,35 @@ function CustomerPage() {
         }
     };
 
+    const handleAddCustomerByFile = async (customerData) => {
+            try {
+                for (const customer of customerData){
+                    try {
+                        await createCustomer({
+                            name: customer.Name, 
+                            floor: customer.Floor,
+                            rented_area: customer["Rented Area"],
+                            contract_expired_time: customer["Contract Expired Time"],
+                            contact_person: customer["Contact Person"],
+                            contact_number: customer["Contact Number"],
+                            director_name: customer["Director Name"],
+                            director_phone_number: customer["Director Phone Number"],
+                        })
+                    } catch (error) {
+                        console.log(error.response?.data)
+                        renderFlashMessage("Error adding customers", "error");
+                    }
+            }
+                const res = await getCustomers();
+                        setCustomers(res.data);
+                        closeAddCustomerForm();
+                renderFlashMessage("Customers Added Succesfully", "success");
+            } catch (error) {
+                console.log(error.response?.data);
+                renderFlashMessage("Error rendering customers", "error");
+            }
+    }
+
     const deleteOneCustomer = async (email) => {
         try {
             await deleteCustomer(email);
@@ -135,7 +164,7 @@ function CustomerPage() {
             <button className="addIcon" onClick={openAddCustomerForm}>
                 <AddCircleOutlineIcon />
             </button>
-            {addCustomerFormOpened && <CustomerForm initialData={""} onSubmit={handleAddCustomer} closeForm={closeAddCustomerForm} />}
+            {addCustomerFormOpened && <CustomerForm initialData={""} onSubmit={handleAddCustomer} fileSubmit={handleAddCustomerByFile} closeForm={closeAddCustomerForm} />}
             {updateCustomerFormOpened && <CustomerForm initialData={initialData} onSubmit={handleUpdateCustomer} closeForm={closeUpdateCustomerForm} />}
             {flashMessage && <FlashMessage message={message} severity={severity} closeMessage={handleFlashMessageClose} />}
         </div>

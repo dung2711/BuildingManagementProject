@@ -66,6 +66,31 @@ function PropertyPage() {
         }
     };
 
+    const handleAddPropertyByFile = async (properties) => {
+        try {
+            for (const property of properties){
+                try {
+                    await createProperty({
+                        name: property.Name,
+                        category: property.Category,
+                        description: property.Description,
+                        numbers: property.Number,
+                    })
+                } catch (error) {
+                    console.log("Error adding property: ", error.response?.data);
+                    renderFlashMessage("Error adding properties", "error");
+                }
+            }
+            const res = await getProperties();
+            setProperties(res.data);
+            closeAddPropertyForm();
+            renderFlashMessage("Added properties successfully", "success");
+        } catch (error) {
+            console.log("Error adding property: ", error.response?.data);
+            renderFlashMessage("Error adding properties", "error");
+        }
+    }
+
     const handleUpdateProperty = async (propertyData) => {
         try {
             await updateProperty(propertyData);
@@ -119,7 +144,7 @@ function PropertyPage() {
         <div>
             <NavBar />
 
-            <FilterForm onFilter={filterProperties} fields={filterFields}/>
+            <FilterForm onFilter={filterProperties} fields={filterFields} />
 
             <div className="data-section">
                 {properties.map((property) => (
@@ -135,7 +160,7 @@ function PropertyPage() {
             <button className="addIcon" onClick={openAddPropertyForm}>
                 <AddCircleOutlineIcon />
             </button>
-            {addPropertyFormOpened && <PropertyForm initialData={""} onSubmit={handleAddProperty} closeForm={closeAddPropertyForm} />}
+            {addPropertyFormOpened && <PropertyForm initialData={""} onSubmit={handleAddProperty} closeForm={closeAddPropertyForm} fileSubmit={handleAddPropertyByFile} />}
             {updatePropertyFormOpened && <PropertyForm initialData={initialData} onSubmit={handleUpdateProperty} closeForm={closeUpdatePropertyForm} />}
             {flashMessage && <FlashMessage message={message} severity={severity} closeMessage={handleFlashMessageClose} />}
         </div>

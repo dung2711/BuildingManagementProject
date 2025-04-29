@@ -73,6 +73,31 @@ function UserPage() {
         }
     };
 
+    const handleAddUsersByFile = async (users) => {
+        try {
+             for (const user of users){
+                 await register({
+                    email: user.Email,
+                    password: "1",
+                    authentication: user.Role,
+                    name: user.Name,
+                    phone_number: user["Phone Number"],
+                    identification: user.Identification,
+                    customer_name: user["Customer Name"],
+                })
+             }
+            const res = await getUser();
+            setUsers(res.data);
+            console.log("getUser response", res.data)
+            closeAddUserForm();
+            renderFlashMessage("Users Added Succesfully", "success");
+
+        } catch (error) {
+            console.log(error.response?.data);
+            renderFlashMessage("Error rendering users", "error");
+        }
+    }
+
     const handleUpdateUser = async (userData) => {
         try {
             await updateUser(userData);
@@ -108,11 +133,9 @@ function UserPage() {
     }
 
     const handleFlashMessageClose = () => {
-        console.log("Flash message closed");
         setFlashMessage(false);
     };
     const renderFlashMessage = (msg, severity) => {
-        console.log("Render flash message:");
         setMessage(msg);
         setSeverity(severity);
         setFlashMessage(true);
@@ -139,9 +162,9 @@ function UserPage() {
             <button className="addIcon" onClick={openAddUserForm}>
                 <AddCircleOutlineIcon />
             </button>
-            {addUserFormOpened && <UserForm initialData={""} onSubmit={handleAddUser} closeForm={closeAddUserForm} />}
+            {addUserFormOpened && <UserForm initialData={""} onSubmit={handleAddUser} fileSubmit={handleAddUsersByFile} closeForm={closeAddUserForm} />}
             {updateUserFormOpened && <UserForm initialData={initialData} onSubmit={handleUpdateUser} closeForm={closeUpdateUserForm} />}
-            {flashMessage && <FlashMessage message={message} severity={severity} closeMessage={handleFlashMessageClose} />} 
+            {flashMessage && <FlashMessage message={message} severity={severity} closeMessage={handleFlashMessageClose} />}
         </div>
 
     )
