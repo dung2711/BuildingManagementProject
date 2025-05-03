@@ -30,6 +30,6 @@ route.post("/login", passport.authenticate("local", {
 }),  loginLogic);
 
 
-route.patch('/change-password', authenticateJWT, authorizeRoles("customer"), validate(changePasswordValidator), changPasswordLogic);
+route.patch('/change-password', authenticateJWT, authorizeRoles("customer","manager","admin"), validate(changePasswordValidator), changPasswordLogic);
 
 export default route;

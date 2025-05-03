@@ -66,11 +66,6 @@ export const getUserById = async (req, res) => {
 
 export const createUser = async (req, res) => {
     try {
-        // const { error } = userCreateSchema.validate(req.body);
-        // if (error) {
-        //     return res.status(400).json(error);
-        // }
-        console.log("📤 Creating user:", req.body);
         const { email, password, authentication,
             name, phone_number, identification, customer_name } = req.body;
         let customer_id = null;
@@ -81,8 +76,7 @@ export const createUser = async (req, res) => {
                         name: customer_name
                     }
                 })).dataValues.id;
-                console.log(customer_id)
-                if(!customer_id){
+                if (!customer_id) {
                     res.status(400).json("Customer not found");
                 }
             } catch (error) {
@@ -100,98 +94,96 @@ export const createUser = async (req, res) => {
                 account: checkResult.dataValues
             });
         } else {
-            bcrypt.hash(password, saltRounds, async (err, hash) => {
-                if (err) {
-                    console.error("Error hashing password:", err);
-                } else {
-                    const result = await User.create({
-                        email: email,
-                        password: hash,
-                        authentication: authentication,
-                        name: name,
-                        phone_number: phone_number,
-                        identification: identification,
-                        customer_id: customer_id
-                    })
-                    const user = result.dataValues;
-                    req.login(user, (err) => {
-                        res.redirect("/");
-                    });
-                }
+            const hash = await bcrypt.hash(password, saltRounds);
+            console.log("Before create");
+            const newUser = await User.create({
+                email: email,
+                password: hash,
+                authentication: authentication,
+                name: name,
+                phone_number: phone_number,
+                identification: identification,
+                customer_id: customer_id
+            })
+            console.log("After create");
+            return res.status(201).json({
+                message: "User created successfully",
+                user: newUser})
+        }
+        
+    }    
+     catch (error) {
+            res.status(500).json({
+                message: "Failed to create user",
+                error: error
             });
         }
-    } catch (error) {
-        res.status(500).json({
-            message: "Failed to create user",
-            error: error
-        });
     }
-}
 
 export const editUserById = async (req, res) => {
-    try {
-        // const { error } = userUpdateSchema.validate(req.body);
-        // if (error) {
-        //     return res.status(400).json(error);
-        // }
-        const id = req.params.id;
-        const name = req.body.name;
-        const phone_number = req.body.phone_number;
-        const authentication = req.body.authentication;
-        const identification = req.body.identification;
-        const customer_name = req.body.customer_name;
-        let customer_id = null;
-        if (customer_name) {
-            try {
-                customer_id = (await Customer.findOne({
-                    where: {
-                        name: customer_name
-                    }
-                })).dataValues.id;
-            } catch (error) {
-                console.log(error)
+        try {
+            // const { error } = userUpdateSchema.validate(req.body);
+            // if (error) {
+            //     return res.status(400).json(error);
+            // }
+            const id = req.params.id;
+            const name = req.body.name;
+            const phone_number = req.body.phone_number;
+            const authentication = req.body.authentication;
+            const identification = req.body.identification;
+            const customer_name = req.body.customer_name;
+            let customer_id = null;
+            if (customer_name) {
+                try {
+                    customer_id = (await Customer.findOne({
+                        where: {
+                            name: customer_name
+                        }
+                    })).dataValues.id;
+                } catch (error) {
+                    console.log(error)
+                }
             }
+            console.log(customer_id)
+            const formerUser = await User.findByPk(id);
+            await User.update({
+                name: name || formerUser.name,
+                phone_number: phone_number || formerUser.phone_number,
+                identification: identification || formerUser.identification,
+                customer_id: customer_id || formerUser.customer_id,
+                authentication: authentication || formerUser.authentication,
+            }, {
+                where: {
+                    email: id
+                }
+            });
+            const user = await User.findOne({
+                where: {
+                    email: id
+                }
+            });
+            res.status(200).json(user);
+        } catch (error) {
+            res.status(500).json({
+                message: "Failed to update user",
+                error: error
+            });
         }
-        console.log(customer_id)
-        const formerUser = await User.findByPk(id);
-        await User.update({
-            name: name || formerUser.name,
-            phone_number: phone_number || formerUser.phone_number,
-            identification: identification || formerUser.identification,
-            customer_id: customer_id || formerUser.customer_id,
-            authentication: authentication || formerUser.authentication,
-        }, {
-            where: {
-                email: id
-            }
-        });
-        const user = await User.findOne({
-            where: {
-                email: id
-            }
-        });
-        res.status(200).json(user);
-    } catch (error) {
-        res.status(500).json({
-            message: "Failed to update user",
-            error: error
-        });
     }
-}
 
-export const deleteUserById = async (req, res) => {
-    try {
-        const id = req.params.id;
-        await User.destroy({
-            where: {
-                email: id
-            }
-        })
-        res.status(200).json("Deleted");
-    } catch (error) {
-        res.status(500).json({
-            message: "Failed to fetch user",
-            error: error
-        });
+    export const deleteUserById = async (req, res) => {
+        try {
+            const id = req.params.id;
+            await User.destroy({
+                where: {
+                    email: id
+                }
+            })
+            res.status(200).json("Deleted");
+        } catch (error) {
+            res.status(500).json({
+                message: "Failed to fetch user",
+                error: error
+            });
+        }
     }
-}

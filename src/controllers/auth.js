@@ -29,6 +29,7 @@ export const loginLogic = async function (req, res) {
 
 export const changPasswordLogic = async function (req, res) {
   try {
+    console.log(req.body)
     const user = req.user;
     const { currentPassword, newPassword } = req.body;
     const isMatch = await bcrypt.compare(currentPassword, user.dataValues.password);
