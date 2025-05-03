@@ -85,7 +85,7 @@ function CustomerPage() {
     const handleAddCustomerByFile = async (customerData) => {
             try {
                 for (const customer of customerData){
-                    try {
+                    
                         await createCustomer({
                             name: customer.Name, 
                             floor: customer.Floor,
@@ -96,10 +96,7 @@ function CustomerPage() {
                             director_name: customer["Director Name"],
                             director_phone_number: customer["Director Phone Number"],
                         })
-                    } catch (error) {
-                        console.log(error.response?.data)
-                        renderFlashMessage("Error adding customers", "error");
-                    }
+                    
             }
                 const res = await getCustomers();
                         setCustomers(res.data);

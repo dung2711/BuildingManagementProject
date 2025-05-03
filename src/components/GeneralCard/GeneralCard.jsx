@@ -33,7 +33,7 @@ export default function GeneralCard({ data, type, openDetailCard }) {
                 </div>
                 <div className="bottom-section" onClick={() => openDetailCard(data)}>
                 {data.status==="Chấp nhận" && <p>🟩{data.status}</p>}
-                    {data.status==="Đã hủy" && <p>🟥{data.status}</p>}
+                    {data.status==="Đã hủy" && <p>⬜{data.status}</p>}
                     {data.status==="Từ chối" && <p>🟥{data.status}</p>}
                     {data.status==="Đang xử lý" && <p>🟦{data.status}</p>}
                 <div className="generalCard-actions" > 

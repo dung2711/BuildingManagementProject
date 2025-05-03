@@ -62,6 +62,12 @@ export default function NavBar() {
                     </a>
                     </li>
                 )}
+                {token && (
+                    <li><a href="/change-password">
+                        Change Password
+                    </a>
+                    </li>
+                )}
             </ul>
         </nav>
     )

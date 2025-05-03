@@ -69,17 +69,14 @@ function PropertyPage() {
     const handleAddPropertyByFile = async (properties) => {
         try {
             for (const property of properties){
-                try {
+                
                     await createProperty({
                         name: property.Name,
                         category: property.Category,
                         description: property.Description,
                         numbers: property.Number,
                     })
-                } catch (error) {
-                    console.log("Error adding property: ", error.response?.data);
-                    renderFlashMessage("Error adding properties", "error");
-                }
+                
             }
             const res = await getProperties();
             setProperties(res.data);

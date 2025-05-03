@@ -10,6 +10,7 @@ import OrderPage from "./pages/OrderPage";
 import PropertyPage from "./pages/PropertyPage";
 import ComplaintPage from "./pages/ComplaintPage";
 import IssuePage from "./pages/IssuePage";
+import ChangePasswordPage from "./pages/ChangePasswordPage/ChangePasswordPage";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/property" element={<AuthorizedRoute allowedRoles={["manager"]}><PropertyPage /></AuthorizedRoute>} />
           <Route path="/complaint" element={<AuthorizedRoute allowedRoles={["manager", "customer"]}><ComplaintPage /></AuthorizedRoute>} />
           <Route path="/issue" element={<AuthorizedRoute allowedRoles={["manager", "customer"]}><IssuePage /></AuthorizedRoute>} />
+          <Route path="/change-password" element={<AuthorizedRoute allowedRoles={["manager", "customer", "admin"]}><ChangePasswordPage /></AuthorizedRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

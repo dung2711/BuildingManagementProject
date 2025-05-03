@@ -42,8 +42,8 @@ function OrderPage() {
         { name: "floor", type: "text", placeholder: "Floor" },
         {
             name: "lift_required", type: "select", placeholder: "Lift Required", options: [
-                { value: "Yes", label: "Yes" },
-                { value: "No", label: "No" }
+                { value: "Cần thang máy", label: "Cần thang máy" },
+                { value: "Không cần thang máy", label: "Không cần thang máy" }
             ]
         },
         { name: "customer_name", type: "text", placeholder: "Customer Name" }

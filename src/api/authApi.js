@@ -8,4 +8,8 @@ const login = async (email, password) => {
     }
 };
 
+export const changePassword = async (currentPassword, newPassword) => {
+    return axiosClient.patch("/change-password", {currentPassword, newPassword});
+}
+
 export default login;

@@ -66,7 +66,7 @@ export default function UserForm({ initialData = {}, onSubmit, closeForm, fileSu
     return (
         <div className="form-container">
             <form onSubmit={handleSubmit} className="form">
-                {initialData.id ? <h1>Update User</h1> : <h1>Add User</h1>}
+                {initialData.email ? <h1>Update User</h1> : <h1>Add User</h1>}
                 <input
                     type="email"
                     name="email"
@@ -74,6 +74,7 @@ export default function UserForm({ initialData = {}, onSubmit, closeForm, fileSu
                     placeholder="Email"
                     onChange={handleChange}
                     required={fileData ? 0 : 1}
+                    disabled={initialData.email ? 1 : 0}
                 />
                 {!initialData.email && <input
                     type="text"
@@ -89,6 +90,7 @@ export default function UserForm({ initialData = {}, onSubmit, closeForm, fileSu
                     onChange={handleChange}
                     required={fileData ? 0 : 1}
                 >
+                    <option value="" hidden disabled>--Chọn loại vai trò--</option>
                     <option value="customer">Customer</option>
                     <option value="manager">Manager</option>
                     <option value="admin">Admin</option>

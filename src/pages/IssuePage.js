@@ -173,7 +173,15 @@ function IssuePage() {
             <button className="addIcon" onClick={openAddIssueForm}>
                 <AddCircleOutlineIcon />
             </button>
-            {openDetail && <DetailCard data={currentIssue} type="issue" closeForm={closeDetailCard} openForm={openUpdateIssueForm} deleteItem={deleteOneIssue} role={role}/>}
+            {openDetail && <DetailCard 
+            data={currentIssue} 
+            type="issue" 
+            closeForm={closeDetailCard} 
+            openForm={openUpdateIssueForm} 
+            deleteItem={deleteOneIssue} 
+            role={role}
+            renderFlashMessage={renderFlashMessage}
+            />}
             {addIssueFormOpened && <IssueForm onSubmit={handleAddIssue} closeForm={closeAddIssueForm} role={role} />}
             {updateIssueFormOpened && <IssueForm initialData={initialData} onSubmit={handleUpdateIssue} closeForm={closeUpdateIssueForm} role={role} />}
             {flashMessage && <FlashMessage message={message} severity={severity} closeMessage={handleFlashMessageClose} />}
