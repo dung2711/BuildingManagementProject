@@ -38,7 +38,10 @@ const Order = sequelize.define('Order', {
     type: DataTypes.STRING(20),
     allowNull: true
   },
-
+  time: {
+    type: DataTypes.STRING(30),
+    allowNull: true
+  },
   customer_id: {
     type: DataTypes.INTEGER,
     allowNull: false

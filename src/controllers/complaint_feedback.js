@@ -62,6 +62,7 @@ export const createComplaintFeedback = async (req, res) => {
         const { types, category,
             description } = req.body;
         const user_id = req.user.dataValues.email;
+        console.log(user_id);
         const complaint_feedback = await Complaint_feedback.create({
             types: types,
             category: category,

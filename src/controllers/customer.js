@@ -17,12 +17,15 @@ export const getAllCustomers = async (req, res) => {
         if(floor) {
             where.floor = {[Op.eq] : parseInt(floor)}
         }
-        if(expired_from){
+        if(expired_from || expired_to){
+            where.contract_expired_time={}
+            if(expired_from){
             where.contract_expired_time[Op.gte] = new Date(expired_from);
         }
         if(expired_to){
             where.contract_expired_time[Op.lte] = new Date(expired_to);
         }
+    }
         if(director_name){
             where.director_name = {[Op.iLike] : `%${director_name}%`};
         }

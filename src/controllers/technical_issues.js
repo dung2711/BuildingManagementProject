@@ -27,8 +27,6 @@ export const getAllIssues = async (req, res) => {
         }
         if (customer_name) {
             const customer_id = (await Customer.findOne({
-                attributes: ["id"]
-            }, {
                 where: {
                     name: customer_name
                 }
@@ -113,16 +111,14 @@ export const editIssueById = async (req, res) => {
         const id = req.params.id;
         const { name, category, 
             description, status, customer_name } = req.body;
-        const customer_id = (await Customer.findOne({
-            attributes: ["id"]
-        }, {
+        let customer_id;
+        if(customer_name){
+        customer_id = (await Customer.findOne({
             where: {
                 name: customer_name,
             }
         })).dataValues.id;
-        if (!customer_id) {
-            return res.status(400).json({ message: "Customer not found" });
-        }
+    }
         const formerIssue = (await Technical_issue.findByPk(id)).dataValues;
         if(user.customer_id != formerIssue.customer_id && user.authentication == "customer"){
             return res.status(400).json("Permission denied: issue not in possession")
