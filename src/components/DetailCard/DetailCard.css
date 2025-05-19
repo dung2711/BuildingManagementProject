@@ -101,3 +101,8 @@
 button:hover, #deny-button:hover {
     background-color: whitesmoke;
 } 
+
+.detailCard .conflictWarning{
+    border-bottom: none;
+    color: rgb(157, 22, 22);
+}

@@ -35,10 +35,16 @@ export default function DetailCard({ data, type, openForm, closeForm, deleteItem
             {type === "order" && <div className="detailCard">
                 <h1>Chi tiết lịch hẹn</h1>
                 <h2>#{data.id}</h2>
+                {data.orderConflicts.length > 0 && role=="manager" && <h1 className="conflictWarning">Đang cùng thời gian: {
+data.orderConflicts.map((order) => {
+    return <span key={order.id}>#{order.id} </span>
+})
+                    }</h1>}
                 <h2 >Thông Tin: </h2>
                 <div className="info-section">
                     <p><strong>Category: </strong> {data.category}</p>
                     <p><strong>Order Date: </strong> {data.order_date}</p>
+                    <p><strong>Order Time: </strong> {data.time}</p>
                     <p><strong>Floor: </strong> {data.floor}</p>
                     {data.observator && <p><strong>Observator: </strong> {data.observator}</p>}
                     {data.observator_phone_number && <p><strong>Observator Phone Number: </strong> {data.observator_phone_number}</p>}
@@ -113,7 +119,11 @@ export default function DetailCard({ data, type, openForm, closeForm, deleteItem
                         <button className="edit-button" onClick={() => openForm(data)}><EditSquareIcon /></button>
                         {role === "manager" && <button className="delete-button" onClick={() => deleteItem(data.id)}><DeleteIcon /></button>}
                     </div>
-                    <button className="close-button" onClick={closeForm}><ArrowBackOutlinedIcon /></button>
+                    <button className="close-button" onClick={(event) => {
+                        event.preventDefault();
+                        closeForm();
+                    }
+                    }><ArrowBackOutlinedIcon /></button>
 
                 </div>
             </div>}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { getOrders, createOrder, updateOrder, deleteOrder } from "../api/orderApi";
+import { getOrders, getOrderConflictById, createOrder, updateOrder, deleteOrder } from "../api/orderApi";
 import { getCustomers } from "../api/customerApi";
 import NavBar from "../components/NavBar/NavBar";
 import "./Page.css";
@@ -19,6 +19,7 @@ function OrderPage() {
     const [customers, setCustomers] = useState([]);
     const [currentOrder, setCurrentOrder] = useState({});
     const [openDetail, setOpenDetail] = useState(false);
+    const [filter, setFilter] = useState([]);
 
     const [message, setMessage] = useState("");
     const [severity, setSeverity] = useState("");
@@ -56,6 +57,7 @@ function OrderPage() {
                 setCustomers(customersRes.data);
                 const res = await getOrders();
                 setOrders(res.data);
+                console.log(res);
             } catch (error) {
                 console.error("Failed to fetch orders", error);
             }
@@ -82,14 +84,15 @@ function OrderPage() {
         setFlashMessage(false);
     };
 
-    const openDetailCard = (orderData) => {
+    const openDetailCard = async (orderData) => {
+        const orderConflicts = (await getOrderConflictById(orderData.id)).data;
         setOpenDetail(true);
-        setCurrentOrder(orderData);
+        setCurrentOrder({...orderData, orderConflicts});
     };
 
     const closeDetailCard = async () => {
         setOpenDetail(false);
-        const res = await getOrders();
+        const res = await getOrders(filter);
         setOrders(res.data);
         setCurrentOrder({});
     };
@@ -98,7 +101,7 @@ function OrderPage() {
         try {
             await createOrder(orderData);
             closeAddOrderForm();
-            const res = await getOrders();
+            const res = await getOrders(filter);
             setOrders(res.data);
             renderFlashMessage("Add order successfully", "success");
         } catch (error) {
@@ -111,7 +114,7 @@ function OrderPage() {
         try {
             await updateOrder(orderData);
             closeUpdateOrderForm();
-            const res = await getOrders();
+            const res = await getOrders(filter);
             setOrders(res.data);
             if (openDetail) {
                 const updatedOrder = res.data.find(order => order.id === orderData.id);
@@ -140,6 +143,7 @@ function OrderPage() {
     };
 
     const filterOrder = async (filters) => {
+        setFilter(filters);
         try {
             const res = await getOrders(filters);
             setOrders(res.data);
@@ -174,7 +178,7 @@ function OrderPage() {
                     const customer = customers.find((customer) => customer.id === order.customer_id);
                     return (
                         <GeneralCard
-                            data={{ ...order, customer }}
+                            data={{ ...order, customer}}
                             key={order.id}
                             type="order"
                             openDetailCard={openDetailCard}

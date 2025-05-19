@@ -1,0 +1,15 @@
+.timeSelector {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.timeSelector button {
+    border-radius: 10px;
+    background-color: rgb(62, 108, 224);
+}
+
+.timeSelector .selected {
+    background-color: whitesmoke;
+}

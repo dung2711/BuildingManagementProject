@@ -132,7 +132,7 @@ function ComplaintPage() {
                 {complaints.map((complaint) => {
                     return (
                     <Card
-                        data={{...complaint, email}}
+                        data={{...complaint}}
                         key={complaint.id}
                         type="complaint"
                         openForm={openUpdateComplaintForm}

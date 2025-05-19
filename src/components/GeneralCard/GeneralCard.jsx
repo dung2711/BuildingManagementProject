@@ -12,6 +12,7 @@ export default function GeneralCard({ data, type, openDetailCard }) {
                     <p><strong>Category: </strong> {data.category}</p>
                     <p><strong>Order Date: </strong> {data.order_date}</p>
                     {data.customer.name && <p><strong>Customer Name: </strong> {data.customer.name}</p>}
+                    <p><strong>Order Time: </strong> {data.time}</p>
                 </div>
                 <div className="bottom-section" onClick={() => openDetailCard(data)}>
                     {data.status==="Chấp nhận" && <p>🟩{data.status}</p>}

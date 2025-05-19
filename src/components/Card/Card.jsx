@@ -98,7 +98,7 @@ export default function Card({ data, type, openForm, deleteItem, role }) {
                 <p><strong>Type: </strong> {data.types}</p>
                 <p><strong>Category: </strong> {data.category}</p>
                 {data.description && <p><strong>Description</strong> {data.description}</p>}
-                <p><strong>User: </strong> {data.email}</p>
+                <p><strong>User: </strong> {data.user_id}</p>
                 <div className="card-actions">
                     <button className="edit-button" onClick={() => openForm(data)}><EditSquareIcon /></button>
                     <button className="delete-button" onClick={() => deleteItem(data.id)}><DeleteIcon /></button>

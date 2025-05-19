@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./Form.css";
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
-import DatePicker from "react-horizontal-datepicker";
+import {DatePicker} from "../DatePicker/DatePicker";
+import TimeSlotSelector from "../TimeSlotSelector/TimeSlotSelector";
 import dayjs from "dayjs";
 
 const categories = [
@@ -13,6 +14,7 @@ const categories = [
 export default function OrderForm({ initialData = {}, onSubmit, closeForm }) {
     const [formData, setFormData] = useState({
         order_date: "",
+        time: "",
         category: "",
         observator: "",
         observator_phone_number: "",
@@ -44,7 +46,13 @@ export default function OrderForm({ initialData = {}, onSubmit, closeForm }) {
             ...prev,
             order_date: formattedDate,
         }));
-        console.log(formData.order_date);
+    }
+    const handleTimeChange = (slot) => {
+        console.log(slot);
+        setFormData(prev => ({
+            ...prev,
+            time: slot
+        }))
     }
 
     const handleSubmit = (event) => {
@@ -73,6 +81,7 @@ export default function OrderForm({ initialData = {}, onSubmit, closeForm }) {
                 endDate={30}
                 color={'#1e94cb'}
                 />
+                <TimeSlotSelector handleTimeChange={handleTimeChange}/>
                 <select
                     name="category"
                     value={formData.category}
