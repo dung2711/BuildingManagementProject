@@ -90,7 +90,7 @@ export const editComplaintFeedbackById = async (req, res) => {
             description} = req.body;
         const user_id = req.user.dataValues.email;
         const former = (await Complaint_feedback.findByPk(id)).dataValues;
-        if(user.email != former.user_id){
+        if(user.email != former.user_id  && user.authentication !== "manager"){
             return res.status(400).json("Permission denied: complaint_feedback not in possession")
         }
         await Complaint_feedback.update({
@@ -119,7 +119,7 @@ export const deleteComplaintFeedbackById = async (req, res) => {
         const user = req.user.dataValues;
         const id = req.params.id;
         const complaint_feedback = await Complaint_feedback.findByPk(id);
-        if(user.email != complaint_feedback.user_id){
+        if(user.email != complaint_feedback.user_id && user.authentication !== "manager"){
             return res.status(400).json("Permission denied: complaint_feedback not in possession")
         }
         await Complaint_feedback.destroy({

@@ -125,6 +125,35 @@ export const getOrderConflictById = async (req, res) => {
     }
 }
 
+
+export const getBookedSlotsByDate = async (req, res) => {
+  try {
+    const { date } = req.query;
+    console.log("Fetching booked slots for date:", date);
+
+    const slots = await Order.findAll({
+      attributes: ['time'],
+      where: {
+        order_date: new Date(date), // Chuyển đổi chuỗi ngày thành đối tượng Date
+        status: {
+          [Op.in]: ['Đang xử lý', 'Chấp nhận'], // chỉ lấy các lịch còn hiệu lực
+        },
+      },
+    });
+
+    const result = slots.map(s => s.time);
+    res.status(200).json(result);
+  } catch (error) {
+    console.log("BookedSlots error:", error);
+    res.status(500).json({
+      message: "Failed to fetch booked slots",
+      error: error.message
+    });
+  }
+};
+
+
+
 export const createOrder = async (req, res) => {
     try {
         // const {error} = orderCreateSchema.validate(req.body);

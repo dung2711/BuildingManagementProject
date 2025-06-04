@@ -3,7 +3,7 @@ import bodyParser from "body-parser";
 import { authenticateJWT, authorizeRoles } from "../middlewares/auth.js";
 import {orderCreateSchema, orderUpdateSchema} from "../validators/orderValidator.js";
 import validate from "../middlewares/validate.js"
-import { getAllOrders, getOrderById, createOrder, editOrderById, deleteOrderById, getOrderConflictById } from "../controllers/order.js";
+import { getAllOrders, getOrderById, createOrder, editOrderById, deleteOrderById, getOrderConflictById, getBookedSlotsByDate } from "../controllers/order.js";
 
 const app = express();
 const route = express.Router();
@@ -12,9 +12,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 route.get("/", authenticateJWT, authorizeRoles("manager", "customer"), getAllOrders);
 
+route.get("/booked-slots", authenticateJWT, authorizeRoles("manager", "customer"), getBookedSlotsByDate);
+
 route.get("/:id", authenticateJWT, authorizeRoles("manager", "customer"), getOrderById);
 
 route.get("/conflicts/:id", authenticateJWT, authorizeRoles("manager", "customer"), getOrderConflictById);
+
 
 route.post("/", authenticateJWT, authorizeRoles("manager", "customer"), validate(orderCreateSchema), createOrder);
 
