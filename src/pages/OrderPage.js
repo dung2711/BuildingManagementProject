@@ -20,6 +20,8 @@ function OrderPage() {
     const [currentOrder, setCurrentOrder] = useState({});
     const [openDetail, setOpenDetail] = useState(false);
     const [filter, setFilter] = useState([]);
+    const [conflictOrder, setConflictOrder] = useState({});
+    const [openConflictOrder, setOpenConflictOrder] = useState(false);
 
     const [message, setMessage] = useState("");
     const [severity, setSeverity] = useState("");
@@ -38,8 +40,8 @@ function OrderPage() {
             ]
         },
         { name: "category", type: "text", placeholder: "Category", },
-        { name: "order_date_from", type: "date", placeholder: "Order Date From:" },
-        { name: "order_date_to", type: "date", placeholder: "Order Date To:" },
+        { name: "order_date_from", type: "date", placeholder: "Order Date From" },
+        { name: "order_date_to", type: "date", placeholder: "Order Date To" },
         { name: "floor", type: "text", placeholder: "Floor" },
         {
             name: "lift_required", type: "select", placeholder: "Lift Required", options: [
@@ -100,10 +102,10 @@ function OrderPage() {
     const handleAddOrder = async (orderData) => {
         try {
             await createOrder(orderData);
-            closeAddOrderForm();
             const res = await getOrders(filter);
             setOrders(res.data);
             renderFlashMessage("Add order successfully", "success");
+            return true;
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
             renderFlashMessage("Add order failed", "error");
@@ -113,15 +115,16 @@ function OrderPage() {
     const handleUpdateOrder = async (orderData) => {
         try {
             await updateOrder(orderData);
-            closeUpdateOrderForm();
             const res = await getOrders(filter);
             setOrders(res.data);
             if (openDetail) {
                 const updatedOrder = res.data.find(order => order.id === orderData.id);
                 const customer = customers.find(c => c.id === updatedOrder.customer_id);
-                setCurrentOrder({ ...updatedOrder, customer });
+                const orderConflicts = (await getOrderConflictById(updatedOrder.id)).data;
+                setCurrentOrder({ ...updatedOrder, customer, orderConflicts });
             }
             renderFlashMessage("Update order successfully", "success");
+            return true;
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
             renderFlashMessage("Update order failed", "error");
@@ -131,14 +134,12 @@ function OrderPage() {
     const deleteOneOrder = async (orderId) => {
         try {
             await deleteOrder(orderId);
-            setOpenDetail(false);
-            setCurrentOrder({});
-            const res = await getOrders();
-            setOrders(res.data);
             renderFlashMessage("Delete order successfully", "success");
+            return true;
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
             renderFlashMessage("Delete order failed", "error");
+            return false;
         }
     };
 
@@ -167,6 +168,21 @@ function OrderPage() {
         timeOutRef.current = setTimeout(() => {
             setFlashMessage(false);
         }, 3000);
+    }
+
+    const handleConflictOrder = async (orderId) => {
+        // const order = orders.find(order => order.id === orderId);
+        // if (order) {
+        //     setConflictOrder(order);
+        //     setOpenConflictOrder(true); 
+        // }
+        const order = orders.find(order => order.id === orderId);
+        console.log("Conflict order", order);
+        const orderConflicts = (await getOrderConflictById(orderId)).data;
+        const customer = customers.find((customer) => customer.id === order.customer_id);
+        setConflictOrder({ ...order, orderConflicts, customer });
+        setOpenConflictOrder(true);
+
     }
     return (
         <div>
@@ -198,6 +214,18 @@ function OrderPage() {
                     closeForm={closeDetailCard}
                     role={role}
                     renderFlashMessage={renderFlashMessage}
+                    handleConflictOrder={handleConflictOrder}
+                />}
+            {openConflictOrder &&
+                <DetailCard
+                    data={conflictOrder}
+                    type="order"
+                    openForm={openUpdateOrderForm}
+                    deleteItem={deleteOneOrder}
+                    closeForm={() => setOpenConflictOrder(false)}
+                    role={role}
+                    renderFlashMessage={renderFlashMessage}
+                    handleConflictOrder={handleConflictOrder}
                 />}
             {addOrderFormOpened && <OrderForm onSubmit={handleAddOrder} closeForm={closeAddOrderForm} role={role} />}
             {updateOrderFormOpened && <OrderForm initialData={initialData} onSubmit={handleUpdateOrder} closeForm={closeUpdateOrderForm} role={role} />}

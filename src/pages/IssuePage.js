@@ -84,13 +84,14 @@ function IssuePage() {
         try {
             console.log("📤 Adding issue:", issueData);
             await createIssue(issueData);
-            closeAddIssueForm();
             const res = await getIssues();
             setIssues(res.data);
             renderFlashMessage("Issue added successfully", "success");
+            return true;
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
             renderFlashMessage("Failed to add issue", "error");
+            return false;
         }
     };
 
@@ -98,7 +99,6 @@ function IssuePage() {
         try {
             console.log("📤 Updating issue:", issueData);
             await updateIssue(issueData);
-            closeUpdateIssueForm();
             const res = await getIssues();
             setIssues(res.data);
             if (openDetail) {
@@ -107,9 +107,11 @@ function IssuePage() {
                 setCurrentIssue({ ...updateIssue, customer });
                 renderFlashMessage("Issue updated successfully", "success");
             }
+            return true;
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
             renderFlashMessage("Failed to update issue", "error");
+            return false;
         }
     };
 
@@ -117,14 +119,12 @@ function IssuePage() {
         try {
             console.log("📤 Deleting issue:", issueId);
             await deleteIssue(issueId);
-            setOpenDetail(false);
-            setCurrentIssue({});
-            const res = await getIssues();
-            setIssues(res.data);
             renderFlashMessage("Issue deleted successfully", "success");
+            return true;
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
             renderFlashMessage("Failed to delete issue", "error");
+            return false;
         }
     };
     const filterIssues = async (filter) => {

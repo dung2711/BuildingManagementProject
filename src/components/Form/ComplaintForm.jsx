@@ -16,6 +16,7 @@ export default function ComplaintForm({ initialData = {}, onSubmit, closeForm })
         category: "",
         description: "",
     });
+    const [isClosing, setIsClosing] = useState(false);
 
     useEffect(() => {
         if (initialData?.id) {
@@ -34,7 +35,7 @@ export default function ComplaintForm({ initialData = {}, onSubmit, closeForm })
         }));
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         const dataToSubmit = { ...formData };
         if (dataToSubmit.types === "" || dataToSubmit.types === null) {
@@ -46,30 +47,44 @@ export default function ComplaintForm({ initialData = {}, onSubmit, closeForm })
         if (dataToSubmit.description === "" || dataToSubmit.description === null) {
             delete dataToSubmit.description;
         }
-        onSubmit(dataToSubmit);
+        const success = await onSubmit(dataToSubmit);
+        if(success){
+            handleClose();
+        }
     };
 
+    const handleClose = () => {
+        setIsClosing(true);
+        setTimeout(() => {
+            closeForm()
+        }, 500);
+    }
+
     return (
-        <div className="form-container">
+        <div className={`form-container ${isClosing ? "fade-out" : ""}`}>
             <form onSubmit={handleSubmit} className="form">
-                {initialData.id? <h1>Update complaint/feedback</h1> : <h1>Add complaint/feedback</h1>}
+                {initialData.id ? <h1>Update complaint/feedback</h1> : <h1>Add complaint/feedback</h1>}
+                <label htmlFor="type"><strong>Type</strong></label>
                 <select
+                    id="type"
                     name="types"
                     value={formData.types}
                     onChange={handleChange}
                     required
-                >   
+                >
                     <option value="" disabled hidden>-- Chọn loại khiếu nại --</option>
                     <option value="Khiếu nại">Khiếu nại</option>
                     <option value="Góp ý">Góp ý</option>
                     <option value="Khác">Khác</option>
                 </select>
+                <label htmlFor="category"><strong>Category</strong></label>
                 <select
+                    id="category"
                     name="category"
                     value={formData.category}
                     onChange={handleChange}
                     required
-                >   
+                >
                     <option value="" disabled hidden>-- Chọn hạng mục --</option>
                     {categories.map((category) => {
                         return (
@@ -77,6 +92,7 @@ export default function ComplaintForm({ initialData = {}, onSubmit, closeForm })
                         )
                     })}
                 </select>
+                <label htmlFor="description"><strong>Description</strong></label>
                 <textarea
                     name="description"
                     value={formData.description || ""}
@@ -85,7 +101,7 @@ export default function ComplaintForm({ initialData = {}, onSubmit, closeForm })
                     required
                 />
                 <button type="submit" className="add-button">{initialData.id ? "Update" : "Add"} Complaint</button>
-                <button type="button" className="closeForm-button" onClick={closeForm}><ArrowBackOutlined /></button>
+                <button type="button" className="closeForm-button" onClick={handleClose}><ArrowBackOutlined /></button>
             </form>
         </div>
     );

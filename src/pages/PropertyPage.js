@@ -56,13 +56,14 @@ function PropertyPage() {
     const handleAddProperty = async (propertyData) => {
         try {
             await createProperty(propertyData);
-            closeAddPropertyForm();
             const res = await getProperties();
             setProperties(res.data);
             renderFlashMessage("Property added successfully", "success");
+            return true;
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
             renderFlashMessage("Failed to add property", "error");
+            return false;
         }
     };
 
@@ -80,24 +81,26 @@ function PropertyPage() {
             }
             const res = await getProperties();
             setProperties(res.data);
-            closeAddPropertyForm();
             renderFlashMessage("Added properties successfully", "success");
+            return true;
         } catch (error) {
             console.log("Error adding property: ", error.response?.data);
             renderFlashMessage("Error adding properties", "error");
+            return false;
         }
     }
 
     const handleUpdateProperty = async (propertyData) => {
         try {
             await updateProperty(propertyData);
-            closeUpdatePropertyForm();
             const res = await getProperties();
             setProperties(res.data);
             renderFlashMessage("Property updated successfully", "success");
+            return true;
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
             renderFlashMessage("Failed to update property", "error");
+            return false;
         }
     };
 

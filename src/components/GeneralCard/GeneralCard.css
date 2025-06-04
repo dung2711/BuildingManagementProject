@@ -1,26 +1,57 @@
 .generalCard {
     border: 1px solid #ddd;
     border-radius: 10px;
-    padding:  16px 7px;
+    padding:  16px 0px;
+    padding-bottom: 0;
     margin: 0px 12px 24px 12px;
     width: 100%;
     background-color: #f9f9f9;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);   
-    font-size: xx-large;
+    font-size: x-large;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.generalCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 
 .generalCard h3 {
     margin-top: 0;
     color: #333;
+    font-size: 22px;
+    padding: 0px 7px;
+}
+
+.generalCard h4 {
+    margin: 0 0 12px;
+    color: #444;
+    font-size: 20px;
+    padding: 0px 7px;
 }
 
 .generalCard p {
     margin: 4px 0;
     color: #555;    
+    font-size: 20px;
 }
 
-.generalCard button {
+.edit-button {
+    background-color: #1e94cb;
+    color: white;
     border: none;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+}
+
+.edit-button:hover {
+    background-color: #0b62a9;
 }
 
 .top-section {
@@ -28,14 +59,28 @@
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
+    gap: 20px;
+    padding: 0px 7px;
+    padding-bottom: 12px;
 }
 
 .bottom-section {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 3px solid black;
+    margin-top: 20px;
+    padding: 16px 7px;
+    border-top: 3px solid #eee;
     cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.bottom-section:hover{
+    background-color: rgb(224, 221, 221);
+    border-radius: 10px;
+}
+
+.generalCard-actions {
+    display: flex;
+    align-items: center;
 }

@@ -6,8 +6,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { updateIssue } from "../../api/issueApi";
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 
-export default function DetailCard({ data, type, openForm, closeForm, deleteItem, role, renderFlashMessage }) {
+export default function DetailCard({ data, type, openForm, closeForm, deleteItem, role, renderFlashMessage, handleConflictOrder }) {
     const [status, setStatus] = useState("");
+    const [isClosing, setIsClosing] = useState(false);
     useEffect(() => {
         if (data.status) {
             setStatus(data.status);
@@ -30,14 +31,33 @@ export default function DetailCard({ data, type, openForm, closeForm, deleteItem
             console.error("Failed to update issue status", error);
         }
     }
+
+    const handleClose = () => {
+        setIsClosing(true);
+        setTimeout(() => {
+            closeForm();
+        }, 500);
+    }
+
+    const handleDelete = async (id) => {
+        const success = await deleteItem(id);
+        if(success){
+            handleClose();
+        }
+    }
     return (
-        <div className="detailCard-container">
+        <div className={`detailCard-container ${isClosing ? "fade-out" : ""}`}>
             {type === "order" && <div className="detailCard">
                 <h1>Chi tiết lịch hẹn</h1>
                 <h2>#{data.id}</h2>
-                {data.orderConflicts.length > 0 && role=="manager" && <h1 className="conflictWarning">Đang cùng thời gian: {
+
+                {data.orderConflicts.length > 0 && role==="manager" &&  <h1 className="conflictWarning">⚠️Đang cùng thời gian: {
 data.orderConflicts.map((order) => {
-    return <span key={order.id}>#{order.id} </span>
+    return <span className="order-conflicts" onClick={() => {
+        if(handleConflictOrder)
+        handleConflictOrder(order.id);
+    }} key={order.id}>#{order.id} </span>
+    
 })
                     }</h1>}
                 <h2 >Thông Tin: </h2>
@@ -77,9 +97,9 @@ data.orderConflicts.map((order) => {
                     </div>
                     <div className="right-action">
                         <button className="edit-button" onClick={() => openForm(data)}><EditSquareIcon /></button>
-                        {role === "manager" && <button className="delete-button" onClick={() => deleteItem(data.id)}><DeleteIcon /></button>}
+                        {role === "manager" && <button className="delete-button" onClick={() => handleDelete(data.id)}><DeleteIcon /></button>}
                     </div>
-                    <button className="close-button" onClick={closeForm}><ArrowBackOutlinedIcon /></button>
+                    <button className="close-button" onClick={handleClose}><ArrowBackOutlinedIcon /></button>
 
                 </div>
             </div>}
@@ -117,13 +137,9 @@ data.orderConflicts.map((order) => {
                     </div>
                     <div className="right-action">
                         <button className="edit-button" onClick={() => openForm(data)}><EditSquareIcon /></button>
-                        {role === "manager" && <button className="delete-button" onClick={() => deleteItem(data.id)}><DeleteIcon /></button>}
+                        {role === "manager" && <button className="delete-button" onClick={() => handleDelete(data.id)}><DeleteIcon /></button>}
                     </div>
-                    <button className="close-button" onClick={(event) => {
-                        event.preventDefault();
-                        closeForm();
-                    }
-                    }><ArrowBackOutlinedIcon /></button>
+                    <button className="close-button" onClick={handleClose}><ArrowBackOutlinedIcon /></button>
 
                 </div>
             </div>}

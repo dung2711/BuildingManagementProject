@@ -63,13 +63,14 @@ function UserPage() {
         try {
             console.log("📤 Adding user:", userData);
             await register(userData);
-            closeAddUserForm();
             const res = await getUser();
             setUsers(res.data);
             renderFlashMessage("User added successfully", "success");
+            return true;
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
             renderFlashMessage("Failed to add user", "error");
+            return false;
         }
     };
 
@@ -88,26 +89,28 @@ function UserPage() {
              }
             const res = await getUser();
             setUsers(res.data);
-            console.log("getUser response", res.data)
-            closeAddUserForm();
+            console.log("getUser response", res.data);
             renderFlashMessage("Users Added Succesfully", "success");
+            return true;
 
         } catch (error) {
             console.log(error.response?.data);
             renderFlashMessage("Error rendering users", "error");
+            return false;
         }
     }
 
     const handleUpdateUser = async (userData) => {
         try {
             await updateUser(userData);
-            closeUpdateUserForm();
             const res = await getUser();
             setUsers(res.data);
             renderFlashMessage("User updated successfully", "success");
+            return true;
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
             renderFlashMessage("Failed to update user", "error");
+            return false;
         }
     }
     const deleteOneUser = async (email) => {

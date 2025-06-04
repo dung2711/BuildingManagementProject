@@ -22,15 +22,18 @@ export default function FilterForm({ fields = [], onFilter, initialValues = {} }
     };
 
     return (
-        <form className="filter-form" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} 
+        className="filter-form  font-[Calibri]">
             <div className="filter-fields">
                 {fields.map(field => (
                     <div key={field.name} className="filter-field">
+                        {field.placeholder && <label className="text-sm font-semibold mb-1 text-gray-700" htmlFor={field.name}>{field.placeholder}</label>}
                         {field.type === "select" ? (
                             <select
                                 name={field.name}
                                 value={filters[field.name] || ""}
                                 onChange={handleChange}
+                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
                                 <option value="">{field.placeholder || "Select"}</option>
                                 {field.options?.map(opt => (
@@ -40,15 +43,14 @@ export default function FilterForm({ fields = [], onFilter, initialValues = {} }
                                 ))}
                             </select>
                         ) : (
-                        <div>
-                            {field.type === "date" && <div><label>{field.placeholder}</label><br /></div>}
-                            
+                        <div>  
                             <input
                                 type={field.type}
                                 name={field.name}
                                 placeholder={field.placeholder}
                                 value={filters[field.name] || ""}
                                 onChange={handleChange}
+                                className=" border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-[240px]"
                             />
                             </div>
                         )}
@@ -56,8 +58,8 @@ export default function FilterForm({ fields = [], onFilter, initialValues = {} }
                 ))}
             </div>
             <div className="filter-buttons">
-                <button type="submit">Filter</button>
-                <button type="button" onClick={handleReset}>Reset</button>
+                <button type="submit" className="flex-1 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">Filter</button>
+                <button type="button" onClick={handleReset} className="flex-1 bg-gray-300 text-gray-800 py-2 rounded-md hover:bg-gray-400 transition">Reset</button>
             </div>
         </form>
     );

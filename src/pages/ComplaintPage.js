@@ -60,13 +60,14 @@ function ComplaintPage() {
         try {
             console.log("📤 Adding complaint:", complaintData);
             await createComplaintFeedback(complaintData);
-            closeAddComplaintForm();
             const res = await getComplaintFeedbacks();
             setComplaints(res.data);
             renderFlashMessage("Complaint added successfully", "success");
+            return true;
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
             renderFlashMessage("Failed to add complaint", "error");
+            return false;
         }
     };
 
@@ -74,13 +75,14 @@ function ComplaintPage() {
         try {
             console.log("📤 Updating complaint:", complaintData);
             await updateComplaintFeedback(complaintData);
-            closeUpdateComplaintForm();
             const res = await getComplaintFeedbacks();
             setComplaints(res.data);
             renderFlashMessage("Complaint updated successfully", "success");
+            return true;
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
             renderFlashMessage("Failed to update complaint", "error");
+            return false;
         }
     };
 

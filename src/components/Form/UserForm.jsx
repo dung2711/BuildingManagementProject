@@ -14,6 +14,7 @@ export default function UserForm({ initialData = {}, onSubmit, closeForm, fileSu
         identification: "",
         customer_name: "" || initialData?.customer?.name
     });
+    const [isClosing, setIsClosing] = useState(false);
 
     useEffect(() => {
         if (initialData?.email) {
@@ -32,10 +33,11 @@ export default function UserForm({ initialData = {}, onSubmit, closeForm, fileSu
         }));
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
+        let success;
         if (fileData.length > 0) {
-            fileSubmit(fileData);
+            success = await fileSubmit(fileData);
         } else {
             const dataToSubmit = { ...formData };
             if (dataToSubmit.customer_name === "") {
@@ -50,7 +52,10 @@ export default function UserForm({ initialData = {}, onSubmit, closeForm, fileSu
             if (dataToSubmit.name === "") {
                 delete dataToSubmit.name;
             }
-            onSubmit(formData);
+            success = await onSubmit(formData);
+        }
+        if (success) {
+            handleClose();
         }
     };
 
@@ -62,12 +67,21 @@ export default function UserForm({ initialData = {}, onSubmit, closeForm, fileSu
         const worksheet = workbook.Sheets[sheetName];
         const jsonData = XLSX.utils.sheet_to_json(worksheet);
         setFileData(jsonData);
+    };
+
+    const handleClose = () => {
+        setIsClosing(true);
+        setTimeout(() => {
+            closeForm();
+        }, 500);
     }
     return (
-        <div className="form-container">
+        <div className={`form-container ${isClosing ? "fade-out" : ""}`}>
             <form onSubmit={handleSubmit} className="form">
                 {initialData.email ? <h1>Update User</h1> : <h1>Add User</h1>}
+                <label htmlFor="email"><strong>Email</strong></label>
                 <input
+                    id="email"
                     type="email"
                     name="email"
                     value={formData.email || ""}
@@ -76,15 +90,23 @@ export default function UserForm({ initialData = {}, onSubmit, closeForm, fileSu
                     required={fileData ? 0 : 1}
                     disabled={initialData.email ? 1 : 0}
                 />
-                {!initialData.email && <input
-                    type="text"
-                    name="password"
-                    value={formData.password || ""}
-                    placeholder="password"
-                    onChange={handleChange}
-                    required={fileData ? 0 : 1}
-                />}
+
+                {!initialData.email &&
+                    <>
+                        <label htmlFor="password"><strong>Password</strong></label>
+                        <input
+                            id="password"
+                            type="text"
+                            name="password"
+                            value={formData.password || ""}
+                            placeholder="password"
+                            onChange={handleChange}
+                            required={fileData ? 0 : 1}
+                        />
+                    </>}
+                <label htmlFor="authentication"><strong>Authentication</strong></label>
                 <select
+                    id="authentication"
                     name="authentication"
                     value={formData.authentication}
                     onChange={handleChange}
@@ -95,8 +117,9 @@ export default function UserForm({ initialData = {}, onSubmit, closeForm, fileSu
                     <option value="manager">Manager</option>
                     <option value="admin">Admin</option>
                 </select>
-
+                <label htmlFor="name"><strong>Name</strong></label>
                 <input
+                    id="name"
                     type="text"
                     name="name"
                     value={formData.name || ""}
@@ -104,8 +127,9 @@ export default function UserForm({ initialData = {}, onSubmit, closeForm, fileSu
                     onChange={handleChange}
                     required={fileData ? 0 : 1}
                 />
-
+                <label htmlFor="phone_number"><strong>Phone Number</strong></label>
                 <input
+                    id="phone_number"
                     type="text"
                     name="phone_number"
                     value={formData.phone_number || ""}
@@ -113,8 +137,9 @@ export default function UserForm({ initialData = {}, onSubmit, closeForm, fileSu
                     onChange={handleChange}
                     required={fileData ? 0 : 1}
                 />
-
+                <label htmlFor="identification"><strong>Identification</strong></label>
                 <input
+                    id="identification"
                     type="text"
                     name="identification"
                     value={formData.identification || ""}
@@ -123,18 +148,24 @@ export default function UserForm({ initialData = {}, onSubmit, closeForm, fileSu
                     required={fileData ? 0 : 1}
                 />
 
-
+                <label htmlFor="customer_name"><strong>Customer Name</strong></label>
                 <input
+                    id="customer_name"
                     type="text"
                     name="customer_name"
                     value={formData.customer_name || ""}
                     placeholder="Customer Name"
                     onChange={handleChange}
                 />
-                <input type="file" accept=".xlsx" onChange={handleFileChange} />
+                {!initialData.email &&
+                    <>
+                        <label htmlFor="fileInput"><strong>Insert User File Here</strong></label>
+                        <input id="fileInput" type="file" accept=".xlsx" onChange={handleFileChange} />
+                    </>
+                }
 
                 <button type="submit" className="add-button">{initialData.email ? "Update" : "Add"} User</button>
-                <button type="button" className="closeForm-button" onClick={closeForm}><ArrowBackOutlined /></button>
+                <button type="button" className="closeForm-button" onClick={handleClose}><ArrowBackOutlined /></button>
             </form>
         </div>
     );

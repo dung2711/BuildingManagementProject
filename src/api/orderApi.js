@@ -19,6 +19,13 @@ export const getOrderConflictById = async (id) => {
     return axiosClient.get(`/order/conflicts/${id}`);
 }
 
+export const getBookedSlotsByDate = async (date) => {
+    console.log("Fetching booked slots for date:", date);
+    return axiosClient.get(`/order/booked-slots`, {
+        params: { date }
+    });
+}
+
 export const createOrder = async ({
     order_date, time, category, observator, observator_phone_number
     , floor, lift_required, description, customer_name

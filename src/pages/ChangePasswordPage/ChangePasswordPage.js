@@ -12,6 +12,7 @@ export default function ChangePasswordPage() {
     const [text, setText] = useState({
         currentPassword: "",
         newPassword: "",
+        newPasswordChecker: "",
     });
     const timeOutRef = useRef(null);
     const [flashMessage, setFlashMessage] = useState(false);
@@ -31,9 +32,13 @@ export default function ChangePasswordPage() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
+            if(text.newPassword !== text.newPasswordChecker){
+                renderFlashMessage("Mật khẩu phải trùng nhau", "error");
+            } else {
             await changePassword(text.currentPassword, text.newPassword);
             logout();
             navigate("/login");
+            }
         } catch (error) {
             console.log(error.response?.data);
             renderFlashMessage("Error changing password", "error");
@@ -59,11 +64,12 @@ export default function ChangePasswordPage() {
     return (
         <div>
             <NavBar />
-        <div id="changePassPage">
+        <div id="changePassPage">   
             <form onSubmit={handleSubmit} id="changePassForm">
                 <h1>Thay đổi mật khẩu</h1>
-                <input onChange={handleUserInput} type="text" name="currentPassword" value={text.currentPassword} placeholder="Current Password" />
-                <input onChange={handleUserInput} type="password" name="newPassword" value={text.newPassword} placeholder="New Password" />
+                <input onChange={handleUserInput} type="text" name="currentPassword" value={text.currentPassword} placeholder="Enter Current Password" />
+                <input onChange={handleUserInput} type="password" name="newPassword" value={text.newPassword} placeholder="Enter New Password" />
+                <input onChange={handleUserInput} type="password" name="newPasswordChecker" value={text.newPasswordChecker} placeholder="Enter New Password Again" />
                 <button type="submit">Change Password</button>
             </form>
             {flashMessage && <FlashMessage message={message} severity={severity} closeMessage={handleFlashMessageClose} />}

@@ -59,26 +59,28 @@ function CustomerPage() {
     const handleAddCustomer = async (customerData) => {
         try {
             await createCustomer(customerData);
-            closeAddCustomerForm();
             const res = await getCustomers();
             setCustomers(res.data);
             renderFlashMessage("Customer added successfully", "success");
+            return true;
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
             renderFlashMessage("Failed to add customer", "error");
+            return false;
         }
     };
 
     const handleUpdateCustomer = async (customerData) => {
         try {
             await updateCustomer(customerData);
-            closeUpdateCustomerForm();
             const res = await getCustomers();
             setCustomers(res.data);
             renderFlashMessage("Customer updated successfully", "success");
+            return true;
         } catch (error) {
             console.log("❌ Error response:", error.response?.data);
             renderFlashMessage("Failed to update customer", "error");
+            return false;
         }
     };
 
@@ -100,11 +102,12 @@ function CustomerPage() {
             }
                 const res = await getCustomers();
                         setCustomers(res.data);
-                        closeAddCustomerForm();
                 renderFlashMessage("Customers Added Succesfully", "success");
+                return true;
             } catch (error) {
                 console.log(error.response?.data);
                 renderFlashMessage("Error rendering customers", "error");
+                return true;
             }
     }
 
