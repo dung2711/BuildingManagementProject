@@ -1,7 +1,5 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/database.js';
-import Customer from './Customer.js';
-import Complaint_feedback from './Complaint_feedback.js';
 
 const User = sequelize.define('User', {
   email: {
