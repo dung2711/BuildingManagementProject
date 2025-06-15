@@ -45,7 +45,7 @@ export default function TimeSlotSelector({ handleTimeChange, selectedDate, booke
               backgroundColor: disabled ? "#ccc" : (slot === selectedSlot ? "#1e94cb" : "#f0f0f0"),
               color: disabled ? "#666" : (slot === selectedSlot ? "white" : "black"),
               margin: "5px",
-              padding: "10px 15px",
+              padding: "10px 15px", 
               borderRadius: "6px",
               border: "none",
               cursor: disabled ? "not-allowed" : "pointer"
